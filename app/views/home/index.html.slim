@@ -1,0 +1,60 @@
+h1.mt-3 DuBio database
+.row
+  .col-4
+    h4 Dictionary: #{@dict.name}
+    / .col-7
+    /   = form_with url: dict_create_path, method: :post do |form|
+    /     .form-floating.mb-3
+    /         = form.number_field :number_of_random_variables, class: 'form-control'
+    /         = form.label :number_of_random_variables, "# random variables:"
+    /     .form-floating.mb-3
+    /         = form.number_field :number_of_alternatives, class: 'form-control'
+    /         = form.label :number_of_alternatives, "# alternatives per variable:"
+
+    /     = form.submit "Generate", class: 'btn btn-dark'
+    - if @dict.rva.length > 0
+      .mt-4
+        table.table.table-hover.table-bordered.border-black
+          thead.table-dark
+            th #
+            th= @dict.dict
+          - @dict.rva.each_with_index do |pair, index|
+            tr
+              td=index
+              td= pair
+  .col-1
+  .col-7
+    h4 Cat Breed: #{@cat_breeds.size} 🐈
+    = form_with url: cat_breed_create_path, method: :post do |form|
+        .form-floating.mb-3
+            = form.number_field :number_of_records, class: 'form-control'
+            = form.label :number_of_records, "# of cats:"
+        .row
+          .col-4
+            .form-floating.mb-3
+                = form.number_field :number_of_random_variables, class: 'form-control'
+                = form.label :number_of_random_variables, "# random variables:"
+          .col-4
+            .form-floating.mb-3
+              = form.number_field :number_of_alternatives, class: 'form-control'
+              = form.label :number_of_alternatives, "# alternatives per variable:"
+          .col-4
+            .form-floating.mb-3
+                = form.number_field :arity_in_sentence, class: 'form-control'
+                = form.label :arity_in_sentence, "# arity in sentence:"
+
+        = form.submit "Clear & Generate", class: 'btn btn-dark'
+    - if @cat_breeds.length > 0
+      .mt-4
+        table.table.table-hover.table-bordered.border-black
+          thead.table-dark
+            th #
+            th Cat
+            th Breed
+            th Sentence
+          - @cat_breeds.each_with_index do |cat, index|
+            tr
+              td=index
+              td= cat.name
+              td= cat.breed
+              td= cat.sentence
