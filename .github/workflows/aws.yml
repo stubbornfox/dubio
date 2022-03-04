@@ -28,4 +28,4 @@ jobs:
             --application-name dubio \
             --deployment-group-name development_group \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --github-location repository=${{ github.repository }},
+            --github-location repository=${{ github.repository }} commitId=${{ github.sha }},
