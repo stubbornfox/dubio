@@ -32,6 +32,7 @@ gem 'capistrano-rails'
 gem 'capistrano-bundler'
 gem 'capistrano-rvm'
 gem 'capistrano3-puma'
+gem 'rvm-capistrano'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
