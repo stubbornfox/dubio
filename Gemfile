@@ -27,6 +27,10 @@ gem 'bootstrap', '~> 5.1.3'
 gem 'jquery-rails'
 gem 'faker'
 gem 'activerecord-import'
+gem 'capistrano'
+gem 'capistrano-rails'
+gem 'capistrano-bundler'
+gem 'capistrano-rvm'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
