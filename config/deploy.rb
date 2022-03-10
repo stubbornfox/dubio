@@ -5,6 +5,7 @@ set :application, "dubio"
 set :puma_conf, "/var/www/dubio/shared/config/puma.rb"
 set :repo_url, 'git@github.com:stubbornfox/dubio.git'
 set :deploy_to, '/home/ubuntu/dubio'
+set :rbenv_ruby, '2.6.3'
 set :use_sudo, true
 set :branch, 'master'
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
