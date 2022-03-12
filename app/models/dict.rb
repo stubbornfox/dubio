@@ -3,7 +3,7 @@ require 'set'
 class Dict < ApplicationRecord
   class << self
     def my_dict
-      Dict.first || Dict.create(name: 'mydict', dictionary: '')
+      Dict.first || Dict.create(name: 'mydict', dict: '')
     end
 
     alias_method :mydict, :my_dict
