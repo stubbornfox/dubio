@@ -1,4 +1,4 @@
-h1.mt-3 DuBio database
+h1.mt-3 DuBio database 🐈 🐈
 .row
   .col-4
     h4 Dictionary: #{@dict.name}
@@ -24,7 +24,7 @@ h1.mt-3 DuBio database
               td= pair
   .col-1
   .col-7
-    h4 Cat Breed: #{@cat_breeds.size} 🐈
+    h4 #{@cat_breeds.size} cats
     = form_with url: cat_breed_create_path, method: :post do |form|
         .form-floating.mb-3
             = form.number_field :number_of_records, class: 'form-control'
