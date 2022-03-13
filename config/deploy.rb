@@ -9,7 +9,7 @@ set :rbenv_ruby, '2.6.3'
 set :use_sudo, true
 set :branch, 'master'
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system')
-set :linked_files, %w{config/master.key config/database.yml}
+set :linked_files, %w{config/master.key config/database.yml config/credentials.yml.enc}
 
 # Default branch is :master
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
@@ -44,3 +44,4 @@ set :linked_files, %w{config/master.key config/database.yml}
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
