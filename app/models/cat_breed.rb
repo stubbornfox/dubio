@@ -61,6 +61,11 @@ class CatBreed < ApplicationRecord
       self.import cat_breeds
     end
 
+    def all_with_prob
+      sql = "select cat_breeds.name, cat_breeds.breed, sentence, prob(dict, cat_breeds.sentence) from cat_breeds, dicts where dicts.name='mydict';"
+      all_cats = ActiveRecord::Base.connection.execute(sql)
+    end
+
 
     alias_method :seed_cat, :make
     alias_method :seed, :make

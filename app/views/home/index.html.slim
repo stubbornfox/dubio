@@ -1,5 +1,4 @@
 h1.mt-3 DuBio database 🐈 🐈
-==  ENV['RAILS_ENV']
 .row
   .col-4
     h4 Dictionary: #{@dict.name}
@@ -25,7 +24,7 @@ h1.mt-3 DuBio database 🐈 🐈
               td= pair
   .col-1
   .col-7
-    h4 #{@cat_breeds.size} cats
+    h4 #{@cat_breeds.ntuples} cats
     = form_with url: cat_breed_create_path, method: :post do |form|
         .form-floating.mb-3
             = form.number_field :number_of_records, class: 'form-control'
@@ -45,7 +44,7 @@ h1.mt-3 DuBio database 🐈 🐈
                 = form.label :arity_in_sentence, "# arity in sentence:"
 
         = form.submit "Clear & Generate", class: 'btn btn-dark'
-    - if @cat_breeds.length > 0
+    - if @cat_breeds.ntuples > 0
       .mt-4
         table.table.table-hover.table-bordered.border-black
           thead.table-dark
@@ -53,9 +52,12 @@ h1.mt-3 DuBio database 🐈 🐈
             th Cat
             th Breed
             th Sentence
+            th Prob
           - @cat_breeds.each_with_index do |cat, index|
             tr
               td=index
-              td= cat.name
-              td= cat.breed
-              td= cat.sentence
+              td= cat['name']
+              td= cat['breed']
+              td= cat['sentence']
+              td= cat['prob']
+
