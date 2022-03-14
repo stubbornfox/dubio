@@ -62,8 +62,13 @@ class CatBreed < ApplicationRecord
     end
 
     def all_with_prob
-      sql = "select cat_breeds.name, cat_breeds.breed, sentence, prob(dict, cat_breeds.sentence) from cat_breeds, dicts where dicts.name='mydict';"
+      sql = "select cat_breeds.name, cat_breeds.breed, sentence, round(prob(dict, cat_breeds.sentence)::numeric,5) as prob from cat_breeds, dicts where dicts.name='mydict';"
       all_cats = ActiveRecord::Base.connection.execute(sql)
+    end
+
+    def exact_count
+      sql = "select exact_count('select count(*) from cat_breeds');"
+      all_count = ActiveRecord::Base.connection.execute(sql)
     end
 
 

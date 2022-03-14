@@ -1,6 +1,6 @@
-h1.mt-3 DuBio database 🐈 🐈
+h1.my-3 DuBio database 🐈 🐈
 .row
-  .col-4
+  .col-3
     h4 Dictionary: #{@dict.name}
     / .col-7
     /   = form_with url: dict_create_path, method: :post do |form|
@@ -16,15 +16,12 @@ h1.mt-3 DuBio database 🐈 🐈
       .mt-4
         table.table.table-hover.table-bordered.border-black
           thead.table-dark
-            th #
             th= @dict.dict
           - @dict.rva.each_with_index do |pair, index|
             tr
-              td=index
               td= pair
-  .col-1
-  .col-7
-    h4 #{@cat_breeds.ntuples} cats
+  .col-6.pll-5
+    h4.mb-4 #{pluralize(@cat_breeds.ntuples, 'cat')}
     = form_with url: cat_breed_create_path, method: :post do |form|
         .form-floating.mb-3
             = form.number_field :number_of_records, class: 'form-control'
@@ -60,4 +57,17 @@ h1.mt-3 DuBio database 🐈 🐈
               td= cat['breed']
               td= cat['sentence']
               td= cat['prob']
+  .col-3
+    h4 Exact Count
+    .mt-4
+      table.table.table-hover.table-bordered.border-black
+        thead.table-dark
+          th Count
+          th Bdd
+        - @cat_count.each_with_index do |cat, index|
+          - cat = cat['exact_count'][1..-2].split(',')
+          tr
+            td= cat[0]
+            td= cat[1][1..-2]
+
 
