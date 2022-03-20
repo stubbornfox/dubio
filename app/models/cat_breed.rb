@@ -5,8 +5,8 @@ class CatBreed < ApplicationRecord
    default_scope { order(:name, :breed) }
 
   class << self
-    def make(number_of_records, number_of_random_variables, number_of_alternatives, arity_in_sentence)
-      arity_in_sentence = 1 if arity_in_sentence.zero?
+    def make(number_of_records, number_of_random_variables=nil, number_of_alternatives=nil, arity_in_sentence=nil)
+      arity_in_sentence = 1 if arity_in_sentence.to_i.zero?
       cat_names = Set.new
 
       CatBreed.in_batches.delete_all
@@ -68,7 +68,7 @@ class CatBreed < ApplicationRecord
 
     def exact_count
       sql = "select exact_count('select count(*) from cat_breeds');"
-      all_count = ActiveRecord::Base.connection.execute(sql)
+      ActiveRecord::Base.connection.execute(sql)
     end
 
 
