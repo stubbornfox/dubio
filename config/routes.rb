@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get 'home/index'
+  get 'home/environment'
   post 'dict/create'
   post 'cat_breed/create'
   root 'home#index'

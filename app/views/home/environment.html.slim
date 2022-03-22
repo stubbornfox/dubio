@@ -1,0 +1,9 @@
+h1.my-3 Algorithm
+= form_with url: cat_breed_create_path, method: :post do |form|
+  .row.mb-3
+    = form.text_field :algorithm_name, class: 'form-control'
+    = form.label :algorithm_name, "Algorithm"
+  .row
+    = form.rich_text_area :code, class: 'form-control'
+    = form.label :code, "Code"
+  = form.submit "Create", class: 'btn btn-dark'
