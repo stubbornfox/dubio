@@ -32,7 +32,7 @@ gem 'capistrano-rails'
 gem 'capistrano-bundler'
 gem 'capistrano-rbenv'
 gem 'capistrano3-puma'
-
+gem 'chartkick'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

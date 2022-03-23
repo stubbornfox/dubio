@@ -6,9 +6,16 @@ html
     = csrf_meta_tags
     = csp_meta_tag
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag 'application'
   body
-    .container-xxl
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      .container-fluid
+        ul.nav.navbar-nav
+          li.nav-item.active
+            = link_to 'Database', home_index_path, class: 'nav-link'
+          li.nav-item.active
+            = link_to 'Experiments', home_experiment_path, class: 'nav-link'
+    .container-fluid
       = yield
   footer
     .text-center.fixed-bottom
