@@ -1,0 +1,10 @@
+.mt-4
+  table.table.table-hover.table-bordered.border-black
+    thead.table-dark
+      th Count
+      th Bdd
+    - cat_count.each_with_index do |cat, index|
+      - cat = cat['exact_count'][1..-2].split(',')
+      tr
+        td= cat[0]
+        td= cat[1][1..-2]

@@ -1,7 +1,7 @@
 .row
   .col-5
     h1.my-3 Algorithm
-    = form_with url: cat_breed_create_path, method: :post do |form|
+    = form_with url: algorithm_create_path, method: :post, remote:true do |form|
       .row.mb-3
         .col-2
           = form.label :algorithm_name, "Algorithm"
@@ -13,8 +13,12 @@
         .col-10
           = form.text_area :code, class: 'form-control', rows: 25
       .row
-        .col-1
-        .col-11
+        .col-2
+        .col-10
+          .algorithm-result
+      .row
+        .col-2
+        .col-10
           = form.submit "Create", class: 'btn btn-dark'
   .col-7.px-5
     h1.my-3 Experiments
@@ -22,13 +26,13 @@
       .col-2
         = label_tag :alogrithm, 'Algorithms:', class: 'px-3'
       .col-5
-        = select_tag :alogrithm, options_for_select(Algorithm.pluck(:name)), class: 'custom-select form-control'
+        = select_tag :alogrithm, options_for_select(Algorithm.pluck(:name)), class: 'custom-select form-control', id: 'algorithm-select'
     = link_to 'Experiment A', experiment_a_path, class: 'btn btn-info mx-2', remote: true
-    = link_to 'Experiment B', '#', class: 'btn btn-info mx-2'
-    = link_to 'Experiment C', '#', class: 'btn btn-info mx-2'
-    = link_to 'Experiment D', '#', class: 'btn btn-info mx-2'
-    = link_to 'Experiment E', '#', class: 'btn btn-info mx-2'
-    = link_to 'Experiment F', '#', class: 'btn btn-info mx-2'
+    = link_to 'Experiment B', experiment_b_path, class: 'btn btn-info mx-2', remote: true
+    = link_to 'Experiment C', experiment_c_path, class: 'btn btn-info mx-2', remote: true
+    = link_to 'Experiment D', experiment_d_path, class: 'btn btn-info mx-2', remote: true
+    = link_to 'Experiment E', experiment_e_path, class: 'btn btn-info mx-2', remote: true
+    = link_to 'Experiment F', experiment_f_path, class: 'btn btn-info mx-2', remote: true
     .mt-5.mx-3
       h3.experiment-description
       .result

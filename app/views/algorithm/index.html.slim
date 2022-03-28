@@ -1,0 +1,19 @@
+.container-xxl
+  .row
+    .col-3
+      h1.my-3 Algorithm
+      div
+        = select_tag :alogrithm, options_from_collection_for_select(Algorithm.all, 'id', 'name'), class: 'custom-select form-control'
+    .col-9.px-5
+      h1.my-3 Code
+      p.algorithm-code style="white-space: pre-wrap"
+        = Algorithm.first.code
+
+javascript:
+  $('#alogrithm').on('change', function (argument) {
+    id = $('#alogrithm').val()
+    $.ajax({
+      url: 'show?id='+id,
+      method: 'GET'
+    })
+  })

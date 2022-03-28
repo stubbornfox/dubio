@@ -15,8 +15,10 @@ html
             = link_to 'Database', home_index_path, class: 'nav-link'
           li.nav-item.active
             = link_to 'Experiments', home_experiment_path, class: 'nav-link'
+          li.nav-item.active
+            = link_to 'Algorithms', algorithm_index_path, class: 'nav-link'
     .container-fluid
       = yield
   footer
-    .text-center.fixed-bottom
-      a.pb-4.d-block.text-dark href='https://ahriha.netlify.app/' Ha Le
+    .text-center
+      a.pb-4.d-inline-block.text-dark href='https://ahriha.netlify.app/' Ha Le

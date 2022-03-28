@@ -61,6 +61,24 @@ class CatBreed < ApplicationRecord
       self.import cat_breeds
     end
 
+
+    def make_experiment_b(number_of_records, number_of_random_variables)
+      CatBreed.in_batches.delete_all
+
+      number_of_alternatives = 1
+      Dict.my_dict.create_rva(number_of_random_variables, number_of_alternatives)
+      cat_breeds = []
+      dicts = Dict.my_dict.rva_pairs
+
+      number_of_records.times do |index|
+        name = Faker::Name.male_first_name
+        breed = Faker::Creature::Cat.breed
+        rva = dicts[index % number_of_random_variables]
+        cat_breeds << CatBreed.new(name: name, breed: breed, sentence: rva)
+      end
+      self.import cat_breeds
+    end
+
     def all_with_prob
       sql = "select cat_breeds.name, cat_breeds.breed, sentence, round(prob(dict, cat_breeds.sentence)::numeric,5) as prob from cat_breeds, dicts where dicts.name='mydict';"
       all_cats = ActiveRecord::Base.connection.execute(sql)

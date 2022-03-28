@@ -1,0 +1,6 @@
+<% if !@error %>
+  $('#algorithm-select').html('<%= j options_for_select(Algorithm.pluck(:name))%>');
+  $('.algorithm-result').html('Create Algorithm successfully!').addClass('text-success').removeClass('text-danger');
+<% else %>
+  $('.algorithm-result').html('<%= j @error %>').addClass('text-danger').removeClass('text-success');
+<% end %>
