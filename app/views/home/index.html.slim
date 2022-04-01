@@ -59,11 +59,11 @@ h1.my-3 DuBio database 🐈 🐈
               td= cat['prob']
   .col-4
     h4  Count
-    .row
-      .col-4
-        = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-dark', remote: true
-      .col-6
-        = link_to 'Histogram Count', home_exact_count_path, class: 'btn btn-dark'
+    = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-info d-inline-block', remote: true
+    = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
+        = form.number_field :bin, value: 2, class: 'form-control d-inline-block mb-2'
+        = form.submit "Bin Count", class: 'btn btn-danger d-inline-block'
+    = link_to 'Top Count', home_hist_count_path, class: 'btn btn-success d-inline-block', remote: true
     .count-result
     / .mt-4
     /   table.table.table-hover.table-bordered.border-black

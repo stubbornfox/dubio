@@ -11,10 +11,12 @@ class HomeController < ApplicationController
     @cat_count = CatBreed.exact_count
   end
 
-  def histogram_count
-    @cat_count = CatBreed.exact_count
+  def hist_count
+    bin = params[:bin].presence || 2
+    @cat_count = CatBreed.hist_count(bin)
   end
 
-  def algorithm
+  def top_count
+    @cat_count = CatBreed.exact_count
   end
 end

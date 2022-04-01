@@ -123,6 +123,16 @@ class CatBreed < ApplicationRecord
       ActiveRecord::Base.connection.execute(sql)
     end
 
+    def hist_count(bin)
+      sql = "select hist_count('select * from cat_breeds', #{bin});"
+      ActiveRecord::Base.connection.execute(sql)
+    end
+
+    def top_count
+      sql = "select hist_count('select * from cat_breeds', 2);"
+      ActiveRecord::Base.connection.execute(sql)
+    end
+
 
     alias_method :seed_cat, :make
     alias_method :seed, :make
