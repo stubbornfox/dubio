@@ -2,7 +2,7 @@ class SentenceGenerator
   def initialize(n, n_arity)
     @n= n
     @n_arity= n_arity || 1
-    @rva_pairs = Dict.my_dict.rva_pairs.sample(n_arity + 2)
+    @rva_pairs = Dict.my_dict.rva_pairs
   end
 
   def make
@@ -15,7 +15,7 @@ class SentenceGenerator
         (@n_arity-1).times do |_|
           rva_str += "#{['&', '|'].sample}#{single_atom}"
         end
-      end while rva_str.in? results
+      end while rva_str.in?(results) || !reduced_bdd?(rva_str)
 
       results << rva_str
     end
@@ -33,5 +33,12 @@ class SentenceGenerator
 
   def single_atom
     "#{['', '!'].sample}#{rva}"
+  end
+
+  def reduced_bdd?(bdd)
+    sql = "select tostring(bdd('#{bdd}'));"
+    clean_bdd = ActiveRecord::Base.connection.execute(sql)
+    reduced_bdd = clean_bdd[0]['tostring']
+    reduced_bdd.count('=') == @n_arity
   end
 end
