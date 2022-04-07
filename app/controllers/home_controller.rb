@@ -17,6 +17,7 @@ class HomeController < ApplicationController
   end
 
   def top_count
-    @cat_count = CatBreed.exact_count
+    k = params[:k].presence || 1
+    @cat_count = CatBreed.top_count(k)
   end
 end

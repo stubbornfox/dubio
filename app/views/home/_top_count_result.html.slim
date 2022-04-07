@@ -1,0 +1,11 @@
+.mt-4
+  table.table.table-hover.table-bordered.border-black
+    thead.table-dark
+      th Count
+      th Bdd
+      th Prob
+    - cat_count.each_with_index do |cat, index|
+      tr
+        td= cat['count']
+        td= cat['sentence']
+        td= cat['prob']

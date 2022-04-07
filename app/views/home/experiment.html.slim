@@ -1,26 +1,5 @@
-.row
-  .col-5
-    h1.my-3 Algorithm
-    = form_with url: algorithm_create_path, method: :post, remote:true do |form|
-      .row.mb-3
-        .col-2
-          = form.label :algorithm_name, "Algorithm"
-        .col-3
-          = form.text_field :algorithm_name, class: 'form-control'
-      .row.mb-3
-        .col-2
-           = form.label :algorithm_name, "Code"
-        .col-10
-          = form.text_area :code, class: 'form-control', rows: 25
-      .row
-        .col-2
-        .col-10
-          .algorithm-result
-      .row
-        .col-2
-        .col-10
-          = form.submit "Create", class: 'btn btn-dark'
-  .col-7.px-5
+.container-xxl
+  .col-.px-5
     h1.my-3 Experiments
     .row.mb-3.in
       .col-2

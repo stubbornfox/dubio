@@ -1,13 +1,14 @@
+script language="javascript" src="https://codemirror.net/lib/codemirror.js" type="text/javascript"
+script language="javascript" src="https://codemirror.net/mode/sql/sql.js" type="text/javascript"
+link href="https://codemirror.net/lib/codemirror.css" rel="stylesheet" type="text/css" /
+link href="https://codemirror.net/theme/lucario.css" rel="stylesheet" type="text/css" /
+
 .container-xxl
-  .row
-    .col-3
-      h1.my-3 Algorithm
-      div
-        = select_tag :alogrithm, options_from_collection_for_select(Algorithm.all, 'id', 'name'), class: 'custom-select form-control'
-    .col-9.px-5
-      h1.my-3 Code
-      p.algorithm-code style="white-space: pre-wrap"
-        = Algorithm.first.code
+  h3.my-3 View Algorithm
+  .col-3
+    = select_tag :alogrithm, options_from_collection_for_select(Algorithm.all, 'id', 'name'), class: 'custom-select form-control mb-3'
+  p.algorithm-code style="white-space: pre-wrap"
+    = text_area_tag :current_code,  Algorithm.last&.code, class: 'form-control', rows: 25, value: Algorithm.first&.code
 
 javascript:
   $('#alogrithm').on('change', function (argument) {
@@ -17,3 +18,12 @@ javascript:
       method: 'GET'
     })
   })
+
+  var editor = CodeMirror.fromTextArea(document.getElementById('current_code'), {
+    lineNumbers: true,
+    mode: 'text/x-plsql',
+    theme: 'lucario',
+    autoRefresh: true,
+  });
+
+  editor.setSize('100%', '70vh');

@@ -16,7 +16,7 @@ class RvaGenerator
       alternative_arr = []
 
       if number_of_alternatives.to_i.zero?
-        number_of_random_variables.times { alternative_arr << rand(1..3) }
+        number_of_random_variables.times { alternative_arr << rand(2..3) }
       else
         alternative_arr =  [number_of_alternatives] * number_of_random_variables
       end

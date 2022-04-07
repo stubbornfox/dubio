@@ -128,8 +128,8 @@ class CatBreed < ApplicationRecord
       ActiveRecord::Base.connection.execute(sql)
     end
 
-    def top_count
-      sql = "select hist_count('select * from cat_breeds', 2);"
+    def top_count(k)
+      sql = "select *  from  top_count('select * from cat_breeds;', #{k}) order by prob desc limit #{k}";
       ActiveRecord::Base.connection.execute(sql)
     end
 
