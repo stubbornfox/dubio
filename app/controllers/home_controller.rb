@@ -4,9 +4,6 @@ class HomeController < ApplicationController
     @cat_breeds = CatBreed.all_with_prob
   end
 
-  def experiment
-  end
-
   def exact_count
     @cat_count = CatBreed.exact_count
   end

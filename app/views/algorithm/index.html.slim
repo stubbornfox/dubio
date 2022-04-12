@@ -5,10 +5,13 @@ link href="https://codemirror.net/theme/lucario.css" rel="stylesheet" type="text
 
 .container-xxl
   h3.my-3 View Algorithm
-  .col-3
-    = select_tag :alogrithm, options_from_collection_for_select(Algorithm.all, 'id', 'name'), class: 'custom-select form-control mb-3'
+  .row
+    .col-3
+      = select_tag :alogrithm, options_from_collection_for_select(Algorithm.all, 'id', 'name'), class: 'custom-select form-control mb-3'
+    .col-3
+      = link_to 'New Algorithm', algorithm_new_path, class: 'btn btn-info'
   p.algorithm-code style="white-space: pre-wrap"
-    = text_area_tag :current_code,  Algorithm.last&.code, class: 'form-control', rows: 25, value: Algorithm.first&.code
+    = text_area_tag :current_code,  Algorithm.first&.code, class: 'form-control', rows: 25, value: Algorithm.first&.code
 
 javascript:
   $('#alogrithm').on('change', function (argument) {

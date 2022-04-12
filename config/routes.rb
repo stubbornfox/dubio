@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   get 'home/index'
-  get 'home/experiment'
   get 'home/exact_count'
   get 'home/hist_count'
   get 'home/top_count'
@@ -8,6 +7,9 @@ Rails.application.routes.draw do
   get 'algorithm/index'
   post 'algorithm/create'
   get 'algorithm/show'
+  get 'algorithm/new'
+  get 'experiment/index'
+  get 'experiment/show'
   get 'experiment/a'
   get 'experiment/b'
   get 'experiment/c'

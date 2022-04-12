@@ -6,7 +6,7 @@
 //= require jquery
 //= require jquery_ujs
 require("@rails/ujs").start()
-require("turbolinks").start()
+// require("turbolinks").start()
 require("@rails/activestorage").start()
 require("channels")
 // require("chart.js")
@@ -23,4 +23,8 @@ require("channels")
 //= require bootstrap-sprockets
 import "chartkick/chart.js"
 import jquery from 'jquery';
+import jQuery from 'jquery';
 window.$ = window.jquery = jquery;
+window.$ = window.jQuery = jQuery;
+import 'select2'
+import 'select2/dist/css/select2.css'

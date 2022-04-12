@@ -1,0 +1,32 @@
+.container-xxl
+  .col-.px-5
+    h1.my-3 Experiments
+    = form_with url: experiment_show_path, method: :get, remote: true do |f|
+      .row.mb-3
+        .col-2
+          = label_tag :algorithm_ids, 'Algorithms:', class: 'px-3'
+        .col-10
+          = f.select :algorithm_ids, options_from_collection_for_select(Algorithm.all, :id, :name, Algorithm.first&.id),{}, {class: 'custom-select form-control', id: 'js-algorithm-select', multiple: true  , size: 5}
+      .row
+        .col-2.mt-2
+          = f.submit 'Experiment A', class: 'btn btn-info'
+        .col-2.mt-2
+          = f.submit 'Experiment B', class: 'btn btn-info'
+        .col-2.mt-2
+          = f.submit 'Experiment C', class: 'btn btn-info'
+        .col-2.mt-2
+          = f.submit 'Experiment D', class: 'btn btn-info'
+        .col-2.mt-2
+          = f.submit 'Experiment E', class: 'btn btn-info'
+        .col-2.mt-2
+          = f.submit 'Experiment F', class: 'btn btn-info'
+    .mt-5.mx-3
+      h3.experiment-description
+      .result
+        = line_chart @result, discrete: true, title: @title, xtitle: @x_title, ytitle: 'Execution time in ms',  height: '550px'
+
+
+javascript:
+  $("#js-algorithm-select").select2({
+    maximumSelectionLength: 5
+  })

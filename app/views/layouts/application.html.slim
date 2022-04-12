@@ -5,8 +5,11 @@ html
     title Dubio
     = csrf_meta_tags
     = csp_meta_tag
-    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = stylesheet_link_tag 'application', media: 'all'
     = javascript_pack_tag 'application'
+    script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"
+    link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"
+
   body
     nav.navbar.navbar-expand-lg.navbar-light.bg-light
       .container-fluid
@@ -14,7 +17,7 @@ html
           li.nav-item.active
             = link_to 'Database', home_index_path, class: 'nav-link'
           li.nav-item.active
-            = link_to 'Experiments', home_experiment_path, class: 'nav-link'
+            = link_to 'Experiments', experiment_index_path, class: 'nav-link'
           li.nav-item.active
             = link_to 'Algorithms', algorithm_index_path, class: 'nav-link'
     .container-fluid
