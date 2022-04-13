@@ -3,7 +3,7 @@
 // a relevant structure within app/javascript and only use these pack files to reference
 // that code so it'll be compiled.
 
-//= require jquery
+//= require jquery3
 //= require jquery_ujs
 require("@rails/ujs").start()
 // require("turbolinks").start()
@@ -18,13 +18,12 @@ require("channels")
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
-//= require jquery3
+
 //= require popper
 //= require bootstrap-sprockets
 import "chartkick/chart.js"
-import jquery from 'jquery';
 import jQuery from 'jquery';
-window.$ = window.jquery = jquery;
 window.$ = window.jQuery = jQuery;
 import 'select2'
 import 'select2/dist/css/select2.css'
+require("bootstrap/dist/js/bootstrap")

@@ -37,11 +37,11 @@ class ExperimentController < ApplicationController
     c = []
     @result.each do |r|
       if r[:name].include?('top_count')
-        c << '#c7232a'
+        c << '#198754'
       elsif r[:name].include?('exact_count')
-        c << '#38b449'
-      else r[:name].include?('hist_count')
         c << '#337198'
+      else r[:name].include?('hist_count')
+        c << '#dc3545'
       end
     end
     return c
