@@ -2,7 +2,7 @@ class CatBreed < ApplicationRecord
   require 'faker'
   require 'activerecord-import'
 
-   default_scope { order(:name, :breed) }
+   # default_scope { order(:name, :breed) }
 
   class << self
     def make(number_of_records, number_of_random_variables=nil, number_of_alternatives=nil, arity_in_sentence=nil)
@@ -61,6 +61,10 @@ class CatBreed < ApplicationRecord
       self.import cat_breeds
     end
 
+    def create_list(cats)
+      cats = cats.map{ |(name, breed, bdd)| CatBreed.new(name: name, breed: breed, sentence: bdd) }
+      self.import cats
+    end
 
     def make_experiment_b(number_of_records, number_of_random_variables)
       CatBreed.in_batches.delete_all

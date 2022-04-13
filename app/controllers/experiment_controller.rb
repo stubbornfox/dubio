@@ -28,8 +28,8 @@ class ExperimentController < ApplicationController
       experiment_b: {title: 'Experiment B explores the effects of varying number of distinct variables (14 records)', 'x_title': 'n random variables'},
       experiment_c: {title: 'Experiment C investigates the effects of varying number of alternatives(10 records, 3 rv)', 'x_title': 'n alternatives per random variables'},
       experiment_d: {title: 'Experiment D  studies the effects of varying complexity of the sentence(8 records, 8 rv)', 'x_title': 'n of arity'},
-      experiment_e: {title: 'Experiment E varying the number of bins B in approximate count (as a histogram)(8 records, 6 rv)', 'x_title': 'n bins'},
-      experiment_f: {title: 'Experiment F varying the number of top k in top count (8 records)', 'x_title': 'top k'},
+      experiment_e: {title: 'Experiment E varying the number of bins B in hist count (15 tuples)', 'x_title': 'n bins'},
+      experiment_f: {title: 'Experiment F varying the number of top k in top count(15 tuples)', 'x_title': 'top k'},
     }
   end
 
