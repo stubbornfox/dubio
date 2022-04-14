@@ -8,7 +8,7 @@ class ExperimentsJob
     te = TestingEnvironment.new(@algorithm.name, @algorithm.code)
     te.create_count_func
     if @algorithm.type_of_count == 'hist_count'
-      @bins = 1
+      @bins = 4
     elsif @algorithm.type_of_count == 'top_count'
       @k = 5
     end
@@ -16,7 +16,7 @@ class ExperimentsJob
 
   def query
     if @k
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@k});"
+      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@k}) order by prob desc limit #{@k}";
     elsif @bins
       @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@bins});"
     else
@@ -28,10 +28,8 @@ class ExperimentsJob
     if @algorithm.type_of_count == 'exact_count'
       exact_count_experiment
     elsif @algorithm.type_of_count == 'hist_count'
-      @bins = 1
       hist_count_experiment
     elsif @algorithm.type_of_count == 'top_count'
-      @k = 5
       top_count_experiment
     end
   end
@@ -46,7 +44,7 @@ class ExperimentsJob
       CAT_BREEDS_A.each_with_index do |(name, breed, bdd), index|
 
         query_plan = nil
-        @bins = @bins && Math.sqrt(index+1).to_i
+        @bins = @bins && 4
 
         cat = CatBreed.create(name: name, breed: breed, sentence: bdd)
         sql = query
@@ -68,44 +66,39 @@ class ExperimentsJob
   end
 
   def experiment_b
-    i = 0
-    n = 14
+    nrv = 0
+    n = 15
     results = {}
-    @bins = @bins && 3
+    @bins = @bins && 4
+    max_nr = 5
+    Rails.logger.info "Run Experiment B for #{algorithm.name}"
+
     begin
-      while true && i < n do
-        i += 1;
+      while nrv < max_nr do
+        nrv += 1;
         query_plan = nil
-        puts i
-
-        CatBreed.make_experiment_b(n, i)
-
+        CatBreed.make_experiment_b(n, nrv)
         Timeout::timeout(30) {
           query_plan = ActiveRecord::Base.connection.execute(query)
         }
-
-        time_ex =  get_execution_time(query_plan)
-
-        puts time_ex
-        results[i] = time_ex
+        time_ex = get_execution_time(query_plan)
+        Rails.logger.info "#{nrv} variables took #{time_ex} ms"
+        results[nrv] = time_ex
       end
     rescue Timeout::Error => e
-      puts 'timeout rescue'
-      puts 'Finish experiment b'
-      puts results
+    ensure
+      index = results.size
       save_result(results, :experiment_b)
+      Rails.logger.info "Finish Experiment B for #{algorithm.name}: #{index} variables in #{results[index]}ms"
       return results
     end
-    save_result(results, :experiment_b)
-    return results
-    puts 'Finish experiment b'
   end
 
   def experiment_c
     i = 0
     n = 10
     results = {}
-    @bins = @bins && 3
+    @bins = @bins && 4
     begin
       while true && i < n do
         i += 1
@@ -136,7 +129,7 @@ class ExperimentsJob
     i = 0
     n = 8
     results = {}
-    @bins = @bins && 2
+    @bins = @bins && 4
     begin
       while true && i < n do
         i += 1
@@ -150,8 +143,8 @@ class ExperimentsJob
         }
 
         time_ex =  get_execution_time(query_plan)
-        puts time_ex
         results[i] = time_ex
+        Rails.logger.info "#{i} variables took #{time_ex} ms"
       end
     rescue Timeout::Error => e
       puts 'timeout rescue'

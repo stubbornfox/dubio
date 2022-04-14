@@ -22,22 +22,23 @@ puts cats
 
 # Generate database for experiment b
 
-# NUMBER_OF_TUPLES = 50
-# n_rv = 1
-# n_tuples = 0
-# cats = []
+NUMBER_OF_TUPLES = 15
+n_rv = 1
+n_tuples = 0
+cats = []
+cat_name_index = 0
 
-# while n_rv < 3
-#   while n_tuples < NUMBER_OF_TUPLES
-#     RVA_50[0..n_rv].each_with_index do |rv, name_index|
-#       rv.each_with_index do |rva, breed_index|
-#         cats << [CAT_NAME[name_index], CAT_BREED[breed_index], rva]
-#       end
-#       n_tuples += rv.size
-#     end
-#   end
-#   puts n_rv
-#   puts cats[0..NUMBER_OF_TUPLES]
-# end
+
+while n_tuples < NUMBER_OF_TUPLES
+  RVA_50[0...n_rv].each_with_index do |rv, _|
+    rv.each_with_index do |rva, breed_index|
+      cats << [CAT_NAME[cat_name_index], CAT_BREED[breed_index], rva]
+    end
+    n_tuples += rv.size
+    cat_name_index += rv.size
+  end
+end
+puts n_rv
+puts cats[0..NUMBER_OF_TUPLES]
 
 

@@ -66,21 +66,22 @@ class CatBreed < ApplicationRecord
       self.import cats
     end
 
-    def make_experiment_b(number_of_records, number_of_random_variables)
+    def make_experiment_b(number_of_records, n_rv)
       CatBreed.in_batches.delete_all
+      n_tuples = 0
+      cats = []
+      cat_name_index = 0
 
-      number_of_alternatives = 1
-      Dict.my_dict.create_rva(number_of_random_variables, number_of_alternatives)
-      cat_breeds = []
-      dicts = Dict.my_dict.rva_pairs
-
-      number_of_records.times do |index|
-        name = Faker::Name.male_first_name
-        breed = Faker::Creature::Cat.breed
-        rva = dicts[index % number_of_random_variables]
-        cat_breeds << CatBreed.new(name: name, breed: breed, sentence: rva)
+      while n_tuples < number_of_records
+        RVA_50[0...n_rv].each_with_index do |rv, _|
+          rv.each_with_index do |rva, breed_index|
+            cats << [CAT_NAME[cat_name_index], CAT_BREED[breed_index], rva]
+          end
+          n_tuples += rv.size
+          cat_name_index += rv.size
+        end
       end
-      self.import cat_breeds
+      create_list cats[0...number_of_records]
     end
 
     def make_experiment_c(number_of_records, number_of_alternatives)

@@ -16,7 +16,8 @@ module Dubio
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     config.autoload_paths += Dir["#{config.root}/lib/**/", "#{config.root}/app/workers/*"]
-    config.logger = Logger.new(STDOUT)
-    config.log_level = :info
+    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger.formatter = config.log_formatter
+    config.logger = ActiveSupport::TaggedLogging.new(logger)
   end
 end
