@@ -101,7 +101,7 @@ DECLARE
   no_of_used_rv int;
   i int;
   j int;
-  offset int;
+  offset_index int;
   return_worlds text[];
 begin
    -- Ugly: I fetch rvas by extract regex match from print(dict) string
@@ -124,12 +124,12 @@ begin
 
    FOR i in 0..no_of_possible_worlds - 1
    LOOP
-      offset = 1;
+      offset_index = 1;
       return_worlds[i] = '';
       FOR j in 1..no_of_used_rv
       LOOP
-         return_worlds[i] = return_worlds[i] || rv_array[offset + combinations[no_of_used_rv*i+j]]|| '&';
-         offset = offset + arr[j];
+         return_worlds[i] = return_worlds[i] || rv_array[offset_index + combinations[no_of_used_rv*i+j]]|| '&';
+         offset_index = offset_index + arr[j];
       END LOOP;
       return_worlds[i] = rtrim(return_worlds[i], '&');
    END LOOP;
@@ -187,6 +187,7 @@ begin
       LOOP
          id = id + 1;
          raise notice 'world %', world_bdd;
+         raise notice 'world str %', world;
          raise notice 'world & record sentence %', tostring(bdd(tostring(r_bdd & world_bdd)));
          IF tostring(bdd(tostring(r_bdd & world_bdd))) = tostring(world_bdd) THEN
             count = count + 1;
