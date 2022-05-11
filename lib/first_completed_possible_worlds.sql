@@ -104,6 +104,7 @@ DECLARE
   sum int;
   return_worlds text[];
 begin
+   -- Ugly: I fetch rvas by extract regex match from print(dict) string
    select print(dict) from dicts where name=dict_name into dict_row;
    rv_array = ARRAY(select distinct REGEXP_MATCHES(dict_row, '('||array_to_string(used_rv, '=\d+|')||'=\d+)', 'g'));
    rv_array = ARRAY(Select unnest(rv_array));
