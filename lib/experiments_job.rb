@@ -127,14 +127,14 @@ class ExperimentsJob
 
   def experiment_d
     i = 0
-    n = 8
+    n = 15
     results = {}
     @bins = @bins && 4
+    arity = 8
     begin
-      while true && i < n do
+      while true && i < 8 do
         i += 1
         query_plan = nil
-        puts i
 
         CatBreed.make_experiment_d(n, i)
 

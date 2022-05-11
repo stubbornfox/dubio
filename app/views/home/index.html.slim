@@ -1,6 +1,6 @@
 h1.my-3 DuBio database 🐈 🐈
 .row
-  .col-3
+  .col-2
     h4 Dictionary: #{@dict.name}
     / .col-7
     /   = form_with url: dict_create_path, method: :post do |form|
@@ -21,7 +21,7 @@ h1.my-3 DuBio database 🐈 🐈
             tr
               td= pair
   .col-5.pl-5
-    h4.mb-4 #{pluralize(@cat_breeds.ntuples, 'cat')}
+    /  h4.mb-4 #{pluralize(@cat_breeds.ntuples, 'cat')}
     = form_with url: cat_breed_create_path, method: :post do |form|
         .form-floating.mb-3
             = form.number_field :number_of_records, class: 'form-control'
@@ -52,12 +52,12 @@ h1.my-3 DuBio database 🐈 🐈
             th Prob
           - @cat_breeds.each_with_index do |cat, index|
             tr
-              td=index
+              td= cat['id']
               td= cat['name']
               td= cat['breed']
               td= cat['sentence']
               td= cat['prob']
-  .col-4
+  .col-5
     h4  Count
     = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-info d-inline-block', remote: true
     = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
@@ -66,6 +66,7 @@ h1.my-3 DuBio database 🐈 🐈
     = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
         = form.number_field :k, value: 1, class: 'form-control d-inline-block mb-2'
         = form.submit "Top count", class: 'btn btn-success d-inline-block'
+    = link_to 'Possible World Count', home_possible_world_count_path, class: 'btn btn-info d-inline-block', remote: true
     .count-result
     / .mt-4
     /   table.table.table-hover.table-bordered.border-black

@@ -119,7 +119,7 @@ class CatBreed < ApplicationRecord
     end
 
     def all_with_prob
-      sql = "select cat_breeds.name, cat_breeds.breed, sentence, round(prob(dict, cat_breeds.sentence)::numeric,5) as prob from cat_breeds, dicts where dicts.name='mydict';"
+      sql = "select cat_breeds.id, cat_breeds.name, cat_breeds.breed, sentence, round(prob(dict, cat_breeds.sentence)::numeric,5) as prob from cat_breeds, dicts where dicts.name='mydict';"
       all_cats = ActiveRecord::Base.connection.execute(sql)
     end
 
@@ -135,6 +135,11 @@ class CatBreed < ApplicationRecord
 
     def top_count(k)
       sql = "select *  from  top_count('select * from cat_breeds;', #{k}) order by prob desc limit #{k}";
+      ActiveRecord::Base.connection.execute(sql)
+    end
+
+    def possible_world_count
+      sql = "select * from possible_world_count('select * from cat_breeds', 'mydict') order by count;"
       ActiveRecord::Base.connection.execute(sql)
     end
 

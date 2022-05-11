@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   get 'home/index'
   get 'home/exact_count'
+  get 'home/possible_world_count'
   get 'home/hist_count'
   get 'home/top_count'
   get 'home/algorithm'

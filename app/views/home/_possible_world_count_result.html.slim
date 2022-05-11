@@ -1,0 +1,11 @@
+.mt-4
+  table.table.table-hover.table-bordered.border-black
+    thead.table-dark
+      th Count
+      th Bdd
+      th Existed records
+    - cat_count.each_with_index do |r, index|
+      tr
+        td= r['count']
+        td= r['sentence']
+        td= r['ids']
