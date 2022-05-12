@@ -134,12 +134,12 @@ class CatBreed < ApplicationRecord
     end
 
     def top_count(k)
-      sql = "select *  from  top_count('select * from cat_breeds;', #{k}) order by prob desc limit #{k}";
+      sql = "select * from top_count('select * from cat_breeds;', #{k}) order by prob desc limit #{k}";
       ActiveRecord::Base.connection.execute(sql)
     end
 
     def possible_world_count
-      sql = "select * from possible_world_count('select * from cat_breeds', 'mydict') order by count;"
+      sql = " select dict, * from dicts, count_on_possible_worlds('select * from cat_breeds', dict) where dicts.name='mydict';";
       ActiveRecord::Base.connection.execute(sql)
     end
 

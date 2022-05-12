@@ -5,12 +5,12 @@ DROP FUNCTION listrv(text);
 -- return {a, b}
 
 CREATE OR REPLACE FUNCTION list_rv(bdd_str text)
-RETURNS text[]
+RETURNS cstring[]
 language plpgsql
 as
 $$
 DECLARE
-  rv_array text[];
+  rv_array cstring[];
 begin
    rv_array = ARRAY(select distinct REGEXP_MATCHES(bdd_str, '(\w+)=', 'g') order by 1 asc);
    return ARRAY(Select unnest(rv_array));
@@ -80,22 +80,20 @@ $$;
 -- This extract the number of alternatives of each random variables
 -- mapping the index from combination_from_alternatives() to the real value of alternatives. Ex:
 
--- select possible_worlds('mydict', '{a, b}');
+-- select possible_worlds(dict, '{a, b}') from dicts where dicts.name='mydict';
 -- return {a=0&b=0,a=0&b=1,a=0&b=2,a=1&b=0,a=1&b=1,a=1&b=2}
 
-DROP FUNCTION possible_worlds(text, text[]);
-CREATE OR REPLACE FUNCTION possible_worlds(dict_name text, used_rv text[])
+DROP FUNCTION possible_worlds(text, cstring[]);
+CREATE OR REPLACE FUNCTION possible_worlds(dict dictionary, used_rv cstring[])
 RETURNS text[]
 language plpgsql
 as
 $$
 DECLARE
   rv_array text[];
-  dict_row text;
   -- rv_str text;
   arr int[];
   combinations int[];
-  a int;
   rv_e text;
   no_of_possible_worlds int;
   no_of_used_rv int;
@@ -107,10 +105,9 @@ DECLARE
   alternatives_arr text[];
   alternative_i text;
 begin
-
    FOREACH rv_e in ARRAY used_rv
    LOOP
-      select alternatives(dict, CAST (rv_e AS cstring )) from dicts where name=dict_name into alternatives_str;
+      select alternatives(dict, CAST (rv_e AS cstring)) into alternatives_str;
       alternatives_arr = string_to_array(alternatives_str, ',');
       FOREACH alternative_i in ARRAY(alternatives_arr)
       LOOP
@@ -141,7 +138,7 @@ begin
 end;
 $$;
 
--- select count_on_possible_worlds('select * from cat_breeds;', 'mydict');
+--  select dict, * from dicts, count_on_possible_worlds('select * from cat_breeds', dict) where dicts.name='mydict';
 -- return
 -- (1,"Bdd((a=0&b=0))",{65945})
 -- (2,"Bdd((a=0&b=1))","{65945,65948}")
@@ -149,7 +146,7 @@ $$;
 
 create type wholder as (count int, sentence bdd, ids int[]);
 
-create or replace function count_on_possible_worlds(equery text, dict_name text)
+create or replace function count_on_possible_worlds(equery text, dict dictionary)
 RETURNS SETOF wholder
 language plpgsql
 as
@@ -157,7 +154,7 @@ $$
 declare
    record_bdds bdd[];
    current_dicts dictionary[];
-   used_rv text[];
+   used_rv cstring[];
    return_worlds text[];
    world_str text;
    world_bdd bdd;
@@ -176,9 +173,9 @@ begin
       record_ids = record_ids ||rec1.id;
    END LOOP;
 
-   used_rv = listrv(array_to_string(record_bdds, ','));
+   used_rv = list_rv(array_to_string(record_bdds, ','));
 
-   return_worlds = possible_worlds(dict_name, used_rv);
+   return_worlds = possible_worlds(dict, used_rv);
 
    FOREACH world_str IN ARRAY(return_worlds)
    LOOP
@@ -190,7 +187,6 @@ begin
       LOOP
          id = id + 1;
          raise notice 'world %', world_bdd;
-         raise notice 'world str %', world;
          raise notice 'world & record sentence %', tostring(bdd(tostring(r_bdd & world_bdd)));
          IF tostring(bdd(tostring(r_bdd & world_bdd))) = tostring(world_bdd) THEN
             count = count + 1;
