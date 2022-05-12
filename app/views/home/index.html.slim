@@ -59,24 +59,23 @@ h1.my-3 DuBio database 🐈 🐈
               td= cat['prob']
   .col-5
     h4  Count
-    = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-info d-inline-block', remote: true
+    = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-info d-inline-block remote-link', remote: true
     = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
         = form.number_field :bin, value: 2, class: 'form-control d-inline-block mb-2'
-        = form.submit "Bin Count", class: 'btn btn-danger d-inline-block'
+        = form.submit "Bin Count", class: 'btn btn-danger d-inline-block remote-link'
     = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
         = form.number_field :k, value: 1, class: 'form-control d-inline-block mb-2'
-        = form.submit "Top count", class: 'btn btn-success d-inline-block'
-    = link_to 'Possible World Count', home_possible_world_count_path, class: 'btn btn-info d-inline-block', remote: true
+        = form.submit "Top count", class: 'btn btn-success d-inline-block remote-link'
+    = link_to 'Possible World Count', home_possible_world_count_path, class: 'btn btn-info d-inline-block remote-link', remote: true
     .count-result
-    / .mt-4
-    /   table.table.table-hover.table-bordered.border-black
-    /     thead.table-dark
-    /       th Count
-    /       th Bdd
-    /     - @cat_count.each_with_index do |cat, index|
-    /       - cat = cat['exact_count'][1..-2].split(',')
-    /       tr
-    /         td= cat[0]
-    /         td= cat[1][1..-2]
 
-
+javascript:
+  $('.remote-link').on('click', function() {
+    $('.count-result').html(
+    ` <div class="mt-5" style="width: 50px; margin: 0 auto">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      </div>
+    `);
+  })

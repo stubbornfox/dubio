@@ -92,7 +92,7 @@ $$
 DECLARE
   rv_array text[];
   dict_row text;
-  rv_str text;
+  -- rv_str text;
   arr int[];
   combinations int[];
   a int;
@@ -103,19 +103,22 @@ DECLARE
   j int;
   offset_index int;
   return_worlds text[];
+  alternatives_str text;
+  alternatives_arr text[];
+  alternative_i text;
 begin
-   -- Ugly: I fetch rvas by extract regex match from print(dict) string
-   select print(dict) from dicts where name=dict_name into dict_row;
-   rv_array = ARRAY(select distinct REGEXP_MATCHES(dict_row, '('||array_to_string(used_rv, '=\d+|')||'=\d+)', 'g'));
-   rv_array = ARRAY(Select unnest(rv_array));
-   rv_str = array_to_string(rv_array, ',');
 
    FOREACH rv_e in ARRAY used_rv
    LOOP
-      SELECT count(*) FROM regexp_matches(rv_str, rv_e || '=', 'g') into a;
-      arr = arr || a;
+      select alternatives(dict, CAST (rv_e AS cstring )) from dicts where name=dict_name into alternatives_str;
+      alternatives_arr = string_to_array(alternatives_str, ',');
+      FOREACH alternative_i in ARRAY(alternatives_arr)
+      LOOP
+         rv_array = rv_array || (rv_e || '=' || alternative_i);
+      END LOOP;
+      arr = arr || array_length(alternatives_arr, 1);
    END LOOP;
-
+   raise notice 'rv_array %', rv_array;
 
    combinations = combination_from_alternatives(arr);
    no_of_used_rv = array_length(used_rv, 1);
@@ -128,7 +131,7 @@ begin
       return_worlds[i] = '';
       FOR j in 1..no_of_used_rv
       LOOP
-         return_worlds[i] = return_worlds[i] || rv_array[offset_index + combinations[no_of_used_rv*i+j]]|| '&';
+         return_worlds[i] = return_worlds[i] || rv_array[offset_index + combinations[no_of_used_rv*i+j]] || '&';
          offset_index = offset_index + arr[j];
       END LOOP;
       return_worlds[i] = rtrim(return_worlds[i], '&');
