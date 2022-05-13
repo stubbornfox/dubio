@@ -163,8 +163,8 @@ declare
    r_bdd bdd;
    count int;
    i int;
-   ids int[];
-   record_ids int[];
+   ids bigint[];
+   record_ids bigint[];
    id int;
 begin
    FOR rec1 in EXECUTE equery

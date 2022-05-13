@@ -23,7 +23,6 @@ declare
    combination_bdd bdd;
 
    count_bdds bdd[];
-   result topholder[];
    r topholder%rowtype;
    rec1 record;
    mydict dictionary;
@@ -61,13 +60,6 @@ begin
       END LOOP;
 
       count_bdds[combination_length] = bdd(tostring(count_bdds[combination_length]|combination_bdd));
-   END LOOP;
-
-   FOR i IN 0..count
-   LOOP
-      result[i].count = i;
-      result[i].sentence = count_bdds[i];
-      result[i].prob = prob(mydict,r.sentence);
    END LOOP;
 
    FOR i IN 0..count

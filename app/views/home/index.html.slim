@@ -2,16 +2,6 @@ h1.my-3 DuBio database 🐈 🐈
 .row
   .col-2
     h4 Dictionary: #{@dict.name}
-    / .col-7
-    /   = form_with url: dict_create_path, method: :post do |form|
-    /     .form-floating.mb-3
-    /         = form.number_field :number_of_random_variables, class: 'form-control'
-    /         = form.label :number_of_random_variables, "# random variables:"
-    /     .form-floating.mb-3
-    /         = form.number_field :number_of_alternatives, class: 'form-control'
-    /         = form.label :number_of_alternatives, "# alternatives per variable:"
-
-    /     = form.submit "Generate", class: 'btn btn-dark'
     - if @dict.rva.length > 0
       .mt-4
         table.table.table-hover.table-bordered.border-black
@@ -21,7 +11,7 @@ h1.my-3 DuBio database 🐈 🐈
             tr
               td= pair
   .col-5.pl-5
-    /  h4.mb-4 #{pluralize(@cat_breeds.ntuples, 'cat')}
+    h4.mb-4 Database Illustrations: Cat Breeds ##{pluralize(@cat_breeds.ntuples, 'cat')}
     = form_with url: cat_breed_create_path, method: :post do |form|
         .form-floating.mb-3
             = form.number_field :number_of_records, class: 'form-control'
@@ -59,19 +49,45 @@ h1.my-3 DuBio database 🐈 🐈
               td= cat['prob']
   .col-5
     h4  Count
-    = link_to 'Exact Count', home_exact_count_path, class: 'btn btn-info d-inline-block remote-link', remote: true
-    = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
-        = form.number_field :bin, value: 2, class: 'form-control d-inline-block mb-2'
-        = form.submit "Bin Count", class: 'btn btn-danger d-inline-block remote-link'
-    = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block mx-4 col-2' do |form|
-        = form.number_field :k, value: 1, class: 'form-control d-inline-block mb-2'
-        = form.submit "Top count", class: 'btn btn-success d-inline-block remote-link'
-    = link_to 'Possible World Count', home_possible_world_count_path, class: 'btn btn-info d-inline-block remote-link', remote: true
-    .count-result
+    ul#myTab.nav.nav-tabs role="tablist"
+      li.nav-item role="presentation"
+        button#exact-tab.nav-link.active aria-controls="exact" aria-selected="true" data-bs-target="#exact" data-bs-toggle="tab" role="tab" type="button" Exact
+      li.nav-item role="presentation"
+        button#histogram-tab.nav-link aria-controls="histogram" aria-selected="false" data-bs-target="#histogram" data-bs-toggle="tab" role="tab" type="button"  Histogram
+      li.nav-item role="presentation"
+        button#top-tab.nav-link aria-controls="top" aria-selected="false" data-bs-target="#top" data-bs-toggle="tab" role="tab" type="button"  Top
+    #myTabContent.tab-content.mt-5
+      #exact.tab-pane.fade.show.active aria-labelledby="home-tab" role="tabpanel"
+        .bd-example
+          = link_to 'Count on Combinations', home_exact_count_path, class: 'btn btn-dark remote-link', role: :button, remote: true
+          = link_to 'Count on Possible Worlds', home_possible_world_count_path, role: :button, class: 'btn btn-dark remote-link', remote: true
+        .count-result
+      #histogram.tab-pane.fade aria-labelledby="profile-tab" role="tabpanel"
+        = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
+          .row.g-3.align-items-center
+            .col-auto
+              = form.label :bin, 'Number of bins'
+            .col-auto
+              = form.number_field :bin, value: 2, class: 'form-control'
+            .col-auto
+              = form.submit "Count", class: 'btn btn-dark d-inline-block remote-link'
+        .count-result
+      #top.tab-pane.fade aria-labelledby="contact-tab" role="tabpanel"
+        = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
+          .row.g-3.align-items-center
+            .col-auto
+              = form.label :k, 'Top k'
+            .col-auto
+              = form.number_field :k, value: 1, class: 'form-control'
+            .col-auto
+              = form.submit "Top count", class: 'btn btn-dark remote-link'
+        .count-result
+
 
 javascript:
   $('.remote-link').on('click', function() {
-    $('.count-result').html(
+    debugger
+    $(this).closest('.tab-pane').find('.count-result').html(
     ` <div class="mt-5" style="width: 50px; margin: 0 auto">
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
