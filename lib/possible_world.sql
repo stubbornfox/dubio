@@ -26,7 +26,6 @@ begin
 end;
 $$;
 
-
 CREATE OR REPLACE FUNCTION get_alternatives(rva text[], dict_row text)
 RETURNS TEXT[]
 language plpgsql

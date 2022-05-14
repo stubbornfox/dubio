@@ -1,0 +1,16 @@
+.container-xxl
+  .col-.px-5
+    h1.my-3 Add Experiments data
+    = form_with url: experiment_create_path, method: :get, remote: true do |f|
+      = label_tag :algorithm_id, 'Algorithms:'
+      = f.select :algorithm_id, options_from_collection_for_select(Algorithm.all, :id, :name),{}, {class: 'custom-select form-control input-control', id: 'js-algorithm-select'}
+
+      = label_tag :name, 'Experiment:', class: 'mt-2'
+      = f.select :name, [:experiment_a, :experiment_b, :experiment_c, :experiment_d, :experiment_e, :experiment_f],{}, {class: 'custom-select form-control input-control'}
+
+      = label_tag :results, 'Result:', class: 'mt-2'
+      = f.text_area :results, {class: 'custom-select form-control input-control'}
+      .row
+        .col-2.mt-2
+          = f.submit 'Add experiment data', class: 'btn btn-info'
+

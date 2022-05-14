@@ -87,18 +87,23 @@ class CatBreed < ApplicationRecord
     def make_experiment_c(number_of_records, number_of_alternatives)
       CatBreed.in_batches.delete_all
 
-      number_of_random_variables = 3
+      number_of_random_variables = number_of_records
       Dict.my_dict.create_rva(number_of_random_variables, number_of_alternatives)
-      cat_breeds = []
+
+      cats = []
       dicts = Dict.my_dict.rva_pairs
       length_dict = dicts.length
-      number_of_records.times do |index|
-        name = Faker::Name.male_first_name
-        breed = Faker::Creature::Cat.breed
-        rva = dicts[index % length_dict]
-        cat_breeds << CatBreed.new(name: name, breed: breed, sentence: rva)
+      offset_d = 0
+
+      while cats.size < number_of_records do
+        j = 0
+        number_of_records.times do |i|
+          rva = dicts[i*number_of_alternatives + j]
+          cats << [CAT_NAME[i], CAT_BREED[i], rva]
+        end
+        j += 1
       end
-      self.import cat_breeds
+      create_list cats[0...number_of_records]
     end
 
     def make_experiment_d(number_of_records, n_arity)

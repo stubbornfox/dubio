@@ -188,7 +188,7 @@ begin
          id = id + 1;
          raise notice 'world %', world_bdd;
          raise notice 'world & record sentence %', tostring(bdd(tostring(r_bdd & world_bdd)));
-         IF tostring(bdd(tostring(r_bdd & world_bdd))) = tostring(world_bdd) THEN
+         IF bdd_equal(r_bdd&world_bdd, world_bdd) THEN
             count = count + 1;
             ids = ids || record_ids[id];
          END IF;

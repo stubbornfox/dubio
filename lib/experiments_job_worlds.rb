@@ -1,6 +1,6 @@
 require 'timeout'
 
-class ExperimentsJob
+class ExperimentsJobWorlds
   attr_accessor :algorithm, :query, :n, :bins, :topk
 
   def initialize(algorithm_id)
@@ -20,7 +20,7 @@ class ExperimentsJob
     elsif @bins
       @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@bins});"
     else
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;');"
+      @query = "explain(analyze, format json) select dict, * from dicts, count_on_possible_worlds('select * from cat_breeds', dict) where dicts.name='mydict'"
     end
   end
 
@@ -35,6 +35,9 @@ class ExperimentsJob
   end
 
   def experiment_a
+    Dict.find_or_create_by(name: 'mydict')
+    Dict.my_dict.clear
+    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
 
@@ -48,11 +51,12 @@ class ExperimentsJob
 
         cat = CatBreed.create(name: name, breed: breed, sentence: bdd)
         sql = query
+
         Timeout::timeout(30) {
           query_plan = ActiveRecord::Base.connection.execute(sql)
         }
 
-        time_ex =  get_execution_time(query_plan)
+        time_ex = get_execution_time(query_plan)
         Rails.logger.info "Count #{index + 1} tooks #{time_ex} ms"
         results[index+1] = time_ex
       end
@@ -73,7 +77,9 @@ class ExperimentsJob
     @bins = @bins && 4
     max_nr = 5
     Rails.logger.info "Run Experiment B for #{algorithm.name}"
-
+    Dict.find_or_create_by(name: 'mydict')
+    Dict.my_dict.clear
+    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     begin
       while nrv < max_nr do
         nrv += 1;
@@ -87,7 +93,6 @@ class ExperimentsJob
         results[nrv] = time_ex
       end
     rescue Timeout::Error => e
-      puts e.message
     ensure
       index = results.size
       save_result(results, :experiment_b)
@@ -97,8 +102,11 @@ class ExperimentsJob
   end
 
   def experiment_c
+    Dict.find_or_create_by(name: 'mydict')
+    Dict.my_dict.clear
+    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     i = 1
-    n = 10
+    n = 5
     results = {}
     @bins = @bins && 4
     begin
@@ -118,7 +126,7 @@ class ExperimentsJob
         results[i] = time_ex
       end
     rescue Timeout::Error => e
-     puts e.message
+      puts e.message
     ensure
       puts results
       index = results.size
@@ -129,7 +137,7 @@ class ExperimentsJob
   end
 
   def experiment_d
-    n = 10
+    n = 15
     cats = CatBreed.make(n);
     Dict.find_or_create_by(name: 'mydict')
     Dict.my_dict.clear
@@ -167,6 +175,9 @@ class ExperimentsJob
   end
 
   def experiment_e
+    Dict.find_or_create_by(name: 'mydict')
+    Dict.my_dict.clear
+    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
 
@@ -201,6 +212,9 @@ class ExperimentsJob
   end
 
   def experiment_f
+    Dict.find_or_create_by(name: 'mydict')
+    Dict.my_dict.clear
+    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
 
