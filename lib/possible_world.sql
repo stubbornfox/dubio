@@ -14,18 +14,6 @@ begin
 end;
 $$;
 
-
-CREATE OR REPLACE FUNCTION get_alternatives(rva text, dict_row text)
-RETURNS TEXT[]
-language plpgsql
-as
-$$
-DECLARE
-begin
-   return (ARRAY(select distinct unnest(REGEXP_MATCHES(dict_row, '('|| rva || '=\d+)', 'g'))));
-end;
-$$;
-
 CREATE OR REPLACE FUNCTION get_alternatives(rva text[], dict dictionary)
 RETURNS TEXT[]
 language plpgsql
