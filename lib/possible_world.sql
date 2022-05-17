@@ -112,6 +112,96 @@ CREATE OR REPLACE AGGREGATE worlds(sentence bdd, dict dictionary)(
    initcond = '{""}'
 );
 
+CREATE OR REPLACE FUNCTION count_on_worlds(list_of_worlds wholder[], sentence bdd, dict dictionary)
+RETURNS wholder[]
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+   alternative text;
+   alternative_str text;
+   alternatives text[];
+   new_alternatives text[];
+   i_world wholder;
+   result wholder[];
+   temp text;
+   changed boolean;
+   r wholder%rowtype;
+BEGIN
+   result = ARRAY[]::wholder[];
+   new_alternatives = ARRAY[]::text[];
+   select rand_vars(sentence) into alternatives;
+   temp = array_to_string(list_of_worlds, ',');
+   changed = false;
+   FOREACH alternative in ARRAY(alternatives)
+   LOOP
+      alternative_str = alternative || '=';
+      -- raise notice 'exist : %', (temp ~ alternative_str);
+      -- raise notice 'alternative_str %', alternative_str;
+
+      IF NOT (temp ~ alternative_str) THEN
+         new_alternatives = new_alternatives || alternative;
+         changed = true;
+      END IF;
+   END LOOP;
+
+   -- raise notice '% new alternatives: ', new_alternatives;
+   select get_alternatives(new_alternatives, dict) into alternatives;
+   -- raise notice '% alternatives: ', alternatives;
+
+   -- raise notice 'arr length low: %', array_length(list_of_worlds, 1);
+   IF array_length(list_of_worlds, 1) IS NULL THEN
+      r.count = 0;
+      r.sentence = bdd('1');
+      list_of_worlds = list_of_worlds || r;
+   end IF;
+
+   -- raise notice 'list_of_worlds: %', list_of_worlds;
+
+   IF not changed THEN
+      FOREACH i_world in ARRAY(list_of_worlds)
+      LOOP
+         r.sentence = i_world.sentence;
+         IF bdd_equal(sentence&i_world.sentence, i_world.sentence) THEN
+            r.count = i_world.count + 1;
+         ELSE
+            r.count = i_world.count;
+         END IF;
+         result = result || r;
+      END LOOP;
+
+      -- raise notice '% results: ', result;
+      RETURN result;
+   ELSE
+      FOREACH i_world in ARRAY(list_of_worlds)
+      LOOP
+         FOREACH alternative in ARRAY(alternatives)
+         LOOP
+            -- result = result || (i_world || ',' || alternative);
+            r.sentence = i_world.sentence & bdd(alternative);
+
+            IF bdd_equal(sentence&r.sentence, r.sentence) THEN
+               r.count = i_world.count + 1;
+            ELSE
+               r.count = i_world.count;
+            END IF;
+            result = result || r;
+         END LOOP;
+      END LOOP;
+
+      -- raise notice '% results: ', result;
+      RETURN result;
+   END IF;
+END
+$$;
+
+
+CREATE OR REPLACE AGGREGATE count_worlds(sentence bdd, dict dictionary)(
+   stype = wholder[],
+   sfunc = count_on_worlds,
+   initcond = '{}'
+);
+
 DROP FUNCTION possible_worlds(text, text[]);
 
 CREATE OR REPLACE FUNCTION possible_worlds(dict_name text, used_rv text[])

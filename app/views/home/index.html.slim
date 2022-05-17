@@ -61,6 +61,7 @@ h1.my-3 DuBio database 🐈 🐈
         .bd-example
           = link_to 'Count on Combinations', home_exact_count_path, class: 'btn btn-dark remote-link', role: :button, remote: true
           = link_to 'Count on Possible Worlds', home_possible_world_count_path, role: :button, class: 'btn btn-dark remote-link', remote: true
+          = link_to 'Aggregation Count on Possible Worlds', home_possible_world_count_agg_path, role: :button, class: 'btn btn-dark remote-link', remote: true
         .count-result
       #histogram.tab-pane.fade aria-labelledby="profile-tab" role="tabpanel"
         = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|

@@ -148,6 +148,10 @@ class CatBreed < ApplicationRecord
       ActiveRecord::Base.connection.execute(sql)
     end
 
+    def count
+      sql = "select * from (select unnest(count_worlds(sentence,  dict)) as count_result from cat_breeds, dicts where dicts.name='mydict') as countw";
+      ActiveRecord::Base.connection.execute(sql)
+    end
 
     alias_method :seed_cat, :make
     alias_method :seed, :make

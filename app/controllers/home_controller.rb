@@ -21,4 +21,7 @@ class HomeController < ApplicationController
   def possible_world_count
     @cat_count = CatBreed.possible_world_count
   end
+  def possible_world_count_agg
+    @cat_count = CatBreed.count
+  end
 end

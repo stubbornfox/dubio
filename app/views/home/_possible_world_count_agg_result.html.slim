@@ -1,0 +1,12 @@
+.mt-4
+  table.table.table-hover.table-bordered.border-black
+    thead.table-dark
+      th Count
+      th Bdd
+      th Existed records
+    - cat_count.each_with_index do |r, index|
+      tr
+        - count, bdd  = r['count_result'].split(',')
+        td= count
+        td= bdd
+        / td=
