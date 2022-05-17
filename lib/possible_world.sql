@@ -26,52 +26,87 @@ begin
 end;
 $$;
 
-CREATE OR REPLACE FUNCTION get_alternatives(rva text[], dict_row text)
+CREATE OR REPLACE FUNCTION get_alternatives(rva text[], dict dictionary)
 RETURNS TEXT[]
 language plpgsql
 as
 $$
 DECLARE
    rv_e text;
+   alternatives_arr text[];
+   alternative_i text;
+   alternatives_str text;
    result text[];
 begin
    result = ARRAY[]::text[];
    FOREACH rv_e in ARRAY(rva)
    LOOP
-      result = result || ARRAY(select distinct REGEXP_MATCHES(dict_row, '('|| rv_e || '=\d+)', 'g'));
+      select alternatives(dict, CAST (rv_e AS cstring)) into alternatives_str;
+      alternatives_arr = string_to_array(alternatives_str, ',');
+      FOREACH alternative_i in ARRAY(alternatives_arr)
+      LOOP
+         result = result || (rv_e || '=' || alternative_i);
+      END LOOP;
    END LOOP;
    return ARRAY(select unnest(result));
 end;
 $$;
 
-
-CREATE OR REPLACE FUNCTION create_worlds(list_of_worlds text[], alternatives text[])
+CREATE OR REPLACE FUNCTION create_worlds(list_of_worlds text[], sentence bdd, dict dictionary)
 RETURNS text[]
 LANGUAGE PLPGSQL
 AS
 $$
 DECLARE
    alternative text;
+   alternative_str text;
+   alternatives text[];
+   new_alternatives text[];
    i_world text;
    result text[];
-   temp text[];
+   temp text;
    changed boolean;
 BEGIN
-   result = list_of_worlds;
-   temp = result;
+   result = ARRAY[]::text[];
+   new_alternatives = ARRAY[]::text[];
+   select rand_vars(sentence) into alternatives;
+   temp = array_to_string(list_of_worlds, ',');
+   changed = false;
    FOREACH alternative in ARRAY(alternatives)
    LOOP
-      FOREACH i_world in ARRAY(temp)
-      LOOP
-         result = result || (i_world || ',' || alternative);
-      END LOOP;
-      
+      alternative_str = alternative || '=';
+      raise notice 'exist : %', (temp ~ alternative_str);
+      raise notice 'alternative_str %', alternative_str;
+
+      IF NOT (temp ~ alternative_str) THEN
+         new_alternatives = new_alternatives || alternative;
+         changed = true;
+      END IF;
    END LOOP;
+
+   raise notice '% new alternatives: ', new_alternatives;
+   select get_alternatives(new_alternatives, dict) into alternatives;
+   raise notice '% alternatives: ', alternatives;
+
+   IF not changed THEN
+      return list_of_worlds;
+   ELSE
+      FOREACH alternative in ARRAY(alternatives)
+      LOOP
+         FOREACH i_world in ARRAY(list_of_worlds)
+         LOOP
+            result = result || (i_world || ',' || alternative);
+         END LOOP;
+      END LOOP;
+
+      raise notice '% results: ', result;
+      RETURN result;
+   END IF;
 END
 $$;
 
 
-CREATE OR REPLACE AGGREGATE worlds(rva text[])(
+CREATE OR REPLACE AGGREGATE worlds(sentence bdd, dict dictionary)(
    stype = text[],
    sfunc = create_worlds,
    initcond = '{""}'
@@ -100,7 +135,6 @@ DECLARE
   return_worlds text[];
 begin
    select print(dict) from dicts where name=dict_name into dict_row;
-
    rv_array = ARRAY(select distinct REGEXP_MATCHES(dict_row, '(['|| array_to_string(used_rv, ',')||']+=\d+)', 'g'));
    rv_array = ARRAY(Select unnest(rv_array));
    rv_str = array_to_string(rv_array, ',');
