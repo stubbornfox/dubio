@@ -17,17 +17,20 @@ class ExperimentController < ApplicationController
   private
 
   def query_data
-    experiment_name = params[:commit]&.parameterize&.underscore&.to_sym || :experiment_a
+    @results = {};
     algorithm_ids = params[:algorithm_ids] || [Algorithm.first.id]
-    ep = Experiment.where(algorithm_id: algorithm_ids, name: experiment_name).includes(:algorithm)
 
-    @result = ep.map do |x|
-      { name: x.algorithm.name, data: x.result }
-    end.uniq { |s| s[:name]}
+    EXPERIMENTS.each do |experiment_name|
+      @results[experiment_name] = {}
+      ep = Experiment.where(algorithm_id: algorithm_ids, name: experiment_name).includes(:algorithm)
 
-    @title = chart_desc[experiment_name][:title]
-    @x_title = chart_desc[experiment_name][:x_title]
-    @colors = colors
+      result = ep.map do |x|
+        { name: x.algorithm.name, data: x.result }
+      end.uniq { |s| s[:name]}
+
+      @results[experiment_name][:result] = result
+      @results[experiment_name][:x_title] = chart_desc[experiment_name][:x_title]
+    end
   end
 
   def chart_desc

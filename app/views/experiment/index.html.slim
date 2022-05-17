@@ -1,29 +1,87 @@
 .container-xxl
-  .col-.px-5
+  .col-12.px-5
     h1.my-3 Experiments
     = form_with url: experiment_show_path, method: :get, remote: true do |f|
       .row.mb-3
         .col-2
           = label_tag :algorithm_ids, 'Algorithms:', class: 'px-3'
-        .col-10
+        .col-4
           = f.select :algorithm_ids, options_from_collection_for_select(Algorithm.all, :id, :name, Algorithm.first&.id),{}, {class: 'custom-select form-control', id: 'js-algorithm-select', multiple: true  , size: 5}
-      .row
-        .col-2.mt-2
-          = f.submit 'Experiment A', class: 'btn btn-info', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment A investigates varying number of tuples on a ratio with number of random variables. "
-        .col-2.mt-2
-          = f.submit 'Experiment B', class: 'btn btn-info', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment B explores the effects of varying number of dis- tinct variables while keeping the number of records constant"
-        .col-2.mt-2
-          = f.submit 'Experiment C', class: 'btn btn-info', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment C investigates the effects of varying number of alternatives, while keeping the number of variables con- stants."
-        .col-2.mt-2
-          = f.submit 'Experiment D', class: 'btn btn-info', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment D studies the effects of varying complexity of the sentence while keeping the number of variable and alter- native constant. "
-        .col-2.mt-2
-          = f.submit 'Experiment E', class: 'btn btn-danger', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment E varying the number of bins B in approximate count (as a histogram) to discover the scale of running time on B."
-        .col-2.mt-2
-          = f.submit 'Experiment F', class: 'btn btn-success', data: {'bs-toggle':"tooltip", 'bs-placement':"bottom"}, title: "Experiment F varying k in approximate count (as top-k ranking) to discover the scale of running time on k."
-    .mt-5.mx-3
-      h3.experiment-description
-      .result
-        = line_chart @result, discrete: true, title: @title, xtitle: @x_title, ytitle: 'Execution time in ms',  height: '550px', colors: @colors
+        .col-6
+          = f.submit 'Get Experiment Result', class: 'btn btn-dark'
+    .row
+      .col-6.my-2
+        #accordionPanelsStayOpenA.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingA.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_a" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_a" data-bs-toggle="collapse" type="button"
+                | Experiment A
+            #panelsStayOpen-collapse-experiment_a.accordion-collapse.show aria-labelledby="panelsStayOpen-headingA"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying number of tuples.
+                  | This is to check the feasibility of the algorithm with respect to the size of the database, and also visualize the complexity of the algorithm.
+                .result
+      .col-6.my-2
+        #accordionPanelsStayOpenB.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingB.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_b" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_b" data-bs-toggle="collapse" type="button"
+                | Experiment B
+            #panelsStayOpen-collapse-experiment_b.accordion-collapse.show aria-labelledby="panelsStayOpen-headingB"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying number of variables.
+                  | This explores the effects of varying number of distinct variables while keeping the number of records constant and the number alternatives per variable at 1. This will produce an increasingly larger sentence and the depth of the BDD tree.
+                .result
+      .col-6.my-2
+        #accordionPanelsStayOpenC.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingC.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_c" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_c" data-bs-toggle="collapse" type="button"
+                | Experiment C
+            #panelsStayOpen-collapse-experiment_c.accordion-collapse.show aria-labelledby="panelsStayOpen-headingC"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying Number of alternatives.
+                  | This check the effects of varying number of alternatives, while keeping the number of variables constants.
+                .result.mt-5
+      .col-6.my-2
+        #accordionPanelsStayOpenD.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingD.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_d" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_d" data-bs-toggle="collapse" type="button"
+                | Experiment D
+            #panelsStayOpen-collapse-experiment_d.accordion-collapse.show aria-labelledby="panelsStayOpen-headingD"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying sentence complexity.
+                  | It studies the effects of varying complexity of the sentence while keeping the number of variable and alternative constant. This experiment mimics the answering of increasingly complex queries in a database
+                .result.mt-5
+      .col-6.my-2
+        #accordionPanelsStayOpenE.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingE.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_e" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_e" data-bs-toggle="collapse" type="button"
+                | Experiment E
+            #panelsStayOpen-collapse-experiment_e.accordion-collapse.show aria-labelledby="panelsStayOpen-headingE"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying the number of bins.
+                  | It discover the scale of running time on number of request bins.
+                .result.mt-5
+      .col-6.my-2
+        #accordionPanelsStayOpenF.accordion
+          .accordion-item
+            h2#panelsStayOpen-headingF.accordion-header
+              button.accordion-button aria-controls="panelsStayOpen-collapse-experiment_f" aria-expanded="true" data-bs-target="#panelsStayOpen-collapse-experiment_f" data-bs-toggle="collapse" type="button"
+                | Experiment F
+            #panelsStayOpen-collapse-experiment_f.accordion-collapse.show aria-labelledby="panelsStayOpen-headingF"
+              .accordion-body
+                .description style="height: 130px"
+                  strong Varying top k ranking.
+                  | It is varying k in approximate count (as top-k ranking) to discover the scale of running time on k.
+                .result.mt-5
 
 
 javascript:

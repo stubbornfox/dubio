@@ -1,1 +1,3 @@
-$(".result").html("<%= j line_chart @result, discrete: true, title: @title,  xtitle: @x_title, ytitle: 'Execution time in ms',  height: '550px'%>");
+<% EXPERIMENTS.each do |experiment_name| %>
+  $("<%= "#panelsStayOpen-collapse-#{experiment_name} .result" %>").html("<%= j line_chart @results[experiment_name][:result], discrete: true, xtitle:  @results[experiment_name][:x_title], ytitle: 'Execution time in ms',  height: '225px'%>");
+<%end %>
