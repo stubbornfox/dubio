@@ -75,7 +75,7 @@ class ExperimentsJobAgg
     n = 15
     results = {}
     @bins = @bins && 4
-    max_nr = 5
+    max_nr = 15
     Rails.logger.info "Run Experiment B for #{algorithm.name}"
     Dict.find_or_create_by(name: 'mydict')
     Dict.my_dict.clear
@@ -106,7 +106,7 @@ class ExperimentsJobAgg
     Dict.my_dict.clear
     Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     i = 1
-    n = 5
+    n = 15
     results = {}
     @bins = @bins && 4
     begin

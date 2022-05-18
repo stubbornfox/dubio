@@ -144,7 +144,7 @@ class CatBreed < ApplicationRecord
     end
 
     def possible_world_count
-      sql = "select dict, * from dicts, count_on_possible_worlds('select * from cat_breeds', dict) where dicts.name='mydict' order by count desc;";
+      sql = "select * from count_on_possible_worlds('select * from cat_breeds', (select dict from dicts where dicts.name='mydict')) order by count desc;";
       ActiveRecord::Base.connection.execute(sql)
     end
 

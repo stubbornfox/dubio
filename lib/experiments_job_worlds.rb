@@ -20,7 +20,7 @@ class ExperimentsJobWorlds
     elsif @bins
       @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@bins});"
     else
-      @query = "explain(analyze, format json) select dict, * from dicts, count_on_possible_worlds('select * from cat_breeds', dict) where dicts.name='mydict'"
+      @query = "explain(analyze, format json) select * from count_on_possible_worlds('select * from cat_breeds', (select dict from dicts where dicts.name='mydict'));"
     end
   end
 
@@ -75,7 +75,7 @@ class ExperimentsJobWorlds
     n = 15
     results = {}
     @bins = @bins && 4
-    max_nr = 5
+    max_nr = 15
     Rails.logger.info "Run Experiment B for #{algorithm.name}"
     Dict.find_or_create_by(name: 'mydict')
     Dict.my_dict.clear
