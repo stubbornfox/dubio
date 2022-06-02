@@ -32,7 +32,7 @@ class SentenceGenerator
   end
 
   def single_atom
-    "#{['', '!'].sample}#{rva}"
+    "#{['', ''].sample}#{rva}"
   end
 
   def reduced_bdd?(bdd)

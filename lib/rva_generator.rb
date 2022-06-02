@@ -27,8 +27,10 @@ class RvaGenerator
         total = 0
         rv_ar = []
         number_of_alternatives = alternative_arr[index]
+        max_p = 1
         (0...number_of_alternatives).each do |alternative|
-          prob = rand(0.0..1)
+          prob = rand(0.0..max_p)
+          max_p = prob
           rv_ar  << [rv, alternative, prob]
           total += prob
         end
@@ -52,13 +54,12 @@ class RvaGenerator
       rva_arr = []
 
       rvs.each_with_index do |rv, index|
-        total_prob = 0
+        up = 1
         number_of_alternatives = alternative_arr[index]
         (0...number_of_alternatives).each do |alternative|
-          up = 1 - total_prob
           prob = rand(0.0..up)
+          up = prob
           rva_arr << "#{rv}=#{alternative}:#{prob}"
-          total_prob += prob
         end
       end
 
