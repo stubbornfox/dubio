@@ -169,7 +169,7 @@ $$;
 
 
 create or replace function top_k_worlds(dict dictionary, k int)
-RETURNS SETOF world_prob
+RETURNS world_prob []
 language plpgsql
 as
 $$
@@ -196,10 +196,12 @@ declare
   ind int[];
   next_ind int[];
   next_wp world_prob;
+  results world_prob[];
   seens text[];
 BEGIN
   list_of_rva = ARRAY(select extract_dict(dict));
   xprobs = ARRAY[]::prob[];
+  results = ARRAY[]::world_prob[];
   probs = ARRAY(select extract_prob(dict));
   i = 0;
 
@@ -254,8 +256,77 @@ BEGIN
         -- raise notice 'hw: %', hw.heap_arr[:hw.heap_size];
     END LOOP;
     lwp.sentence = get_alter(lwp.indexes, xprobs);
-    RETURN NEXT lwp;
+    results = results || lwp;
     i_k := i_k + 1;
   END LOOP;
+  RETURN results;
 END;
 $$;
+
+
+CREATE OR REPLACE AGGREGATE count_on_topk_worlds(top_k_world_prob world_prob[], sentence bdd)(
+  stype = count_prob[],
+  sfunc = count_topk_worlds,
+  initcond = '{}'
+);
+
+CREATE OR REPLACE FUNCTION belongs(sentence bdd, world text)
+RETURNS boolean
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+  simple text;
+  rv_array text[];
+BEGIN
+  simple = array_to_string(rand_vars(sentence), '|');
+  simple = '([' || simple || ']=\d+)';
+  rv_array = ARRAY(select * from regexp_matches(world, simple, 'g'));
+  simple = array_to_string(rv_array,'&');
+  return not isfalse(bdd(tostring(sentence)||'&'||simple));
+END;
+$$;
+
+create type count_prob as (count int, sentence text, prob float);
+
+CREATE OR REPLACE FUNCTION count_topk_worlds(list_of_worlds count_prob[], top_k_world_prob world_prob[], sentence bdd)
+RETURNS count_prob[]
+LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+  i_world_prob world_prob;
+  world_sentence text;
+  i int;
+  r count_prob%rowtype;
+  sentencestr text;
+BEGIN
+
+  i = 1;
+  IF array_length(list_of_worlds, 1) IS NULL THEN
+    FOREACH i_world_prob in ARRAY(top_k_world_prob) LOOP
+      r.count = 0;
+      r.sentence = i_world_prob.sentence;
+      r.prob = i_world_prob.prob;
+      list_of_worlds = list_of_worlds || r;
+    END LOOP;
+  end IF;
+
+  sentencestr = tostring(sentence);
+  FOREACH i_world_prob in ARRAY(top_k_world_prob) LOOP
+
+    IF belongs(sentence, i_world_prob.sentence) THEN
+      list_of_worlds[i].count = list_of_worlds[i].count + 1;
+    END IF;
+
+
+    i = i+1;
+  END LOOP;
+  RETURN list_of_worlds;
+END;
+$$;
+
+select belongs(bdd('a=1&b=2'), 'a=1&b=2&c=0&d=1');
+select bdd_equal(sentence&bdd('a=0&b=1&c=1'), bdd('a=0&b=1&c=1'))  from cat_breeds;
+select top_k_worlds(dict, 5) from dicts where dicts.name='mydict';
+select unnest(count_on_topk_worlds(top_k_worlds(dict, 5), sentence)) from cat_breeds, dicts where dicts.name='mydict';
