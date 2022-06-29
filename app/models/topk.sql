@@ -199,7 +199,6 @@ declare
   results world_prob[];
   seens text[];
 BEGIN
-  list_of_rva = ARRAY(select extract_dict(dict));
   xprobs = ARRAY[]::prob[];
   results = ARRAY[]::world_prob[];
   probs = ARRAY(select extract_prob(dict));

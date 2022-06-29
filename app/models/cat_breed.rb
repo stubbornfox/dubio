@@ -129,7 +129,8 @@ class CatBreed < ApplicationRecord
     end
 
     def exact_count
-      sql = "select exact_count('select * from cat_breeds');"
+      sql = "select count, agg_or(sentence) as bdd from dicts, comb_count('select sentence from cat_breeds', dict) where dicts.name='mydict'
+              group by count;"
       ActiveRecord::Base.connection.execute(sql)
     end
 
@@ -139,7 +140,17 @@ class CatBreed < ApplicationRecord
     end
 
     def top_count(k)
-      sql = "select * from top_count('select * from cat_breeds;', #{k}) order by prob desc limit #{k}";
+      sql = "select (q.c).count, bdd(STRING_AGG((q.c).sentence, '|')) as bdd from (select unnest(count_on_topk_worlds(top_k_worlds(dict, #{k}), sentence)) as c from cat_breeds, dicts where dicts.name='mydict') q group by count;"
+      ActiveRecord::Base.connection.execute(sql)
+    end
+
+    def top_5_count
+      sql="select (q.c).count, bdd(STRING_AGG((q.c).sentence, '|')) as bdd from (select unnest(count_on_topk_worlds(top_k_worlds(dict, 5), sentence)) as c from cat_breeds, dicts where dicts.name='mydict') q group by count;"
+      ActiveRecord::Base.connection.execute(sql)
+    end
+
+    def top_10_count
+      sql="select (q.c).count, bdd(STRING_AGG((q.c).sentence, '|')) as bdd from (select unnest(count_on_topk_worlds(top_k_worlds(dict, 10), sentence)) as c from cat_breeds, dicts where dicts.name='mydict') q group by count;"
       ActiveRecord::Base.connection.execute(sql)
     end
 
@@ -149,7 +160,7 @@ class CatBreed < ApplicationRecord
     end
 
     def count
-      sql = "select * from (select unnest(count_worlds(sentence,  dict)) as count_result from cat_breeds, dicts where dicts.name='mydict') as countw";
+      sql ="select (q.c).count, agg_or((q.c).sentence) as bdd from (select unnest(count_worlds(cat_breeds.sentence,  dicts.dict)) as c FROM cat_breeds, dicts where dicts.name='mydict') q group by count;"
       ActiveRecord::Base.connection.execute(sql)
     end
 

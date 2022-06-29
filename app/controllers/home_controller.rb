@@ -15,12 +15,9 @@ class HomeController < ApplicationController
 
   def top_count
     k = params[:k].presence || 1
-    @cat_count = CatBreed.top_count(k)
+    @cat_count = CatBreed.top_5_count
   end
 
-  def possible_world_count
-    @cat_count = CatBreed.possible_world_count
-  end
   def possible_world_count_agg
     @cat_count = CatBreed.count
   end

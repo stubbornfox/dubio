@@ -1,69 +1,49 @@
 require 'timeout'
 
-class ExperimentsJobAgg
+class CombExperimentJob < ExperimentSetup
   attr_accessor :algorithm, :query, :n, :bins, :topk
 
-  def initialize(algorithm_id)
-    @algorithm = Algorithm.find(algorithm_id)
-    te = TestingEnvironment.new(@algorithm.name, @algorithm.code)
-    te.create_count_func
-    if @algorithm.type_of_count == 'hist_count'
-      @bins = 4
-    elsif @algorithm.type_of_count == 'top_count'
-      @k = 5
-    end
+  def initialize
+    @algorithm = Algorithm.find(27)
   end
 
   def query
-    if @k
-      @query = "explain(analyze, format json) select count_on_topk_worlds(top_k_worlds(dict, #{@k}), sentence) from cat_breeds, dicts where dicts.name='mydict';"
-      # @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@k}) order by prob desc limit #{@k}";
-    elsif @bins
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@bins});"
-    else
-      # @query = "explain(analyze, format json) select (q.c).count, agg_or((q.c).sentence) from (select unnest(count_worlds(cat_breeds.sentence,  dicts.dict)) as c FROM cat_breeds, dicts where dicts.name='mydict') q group by count;"
-      # @query = "explain(analyze, format json) select count_worlds(sentence,  dict) from cat_breeds, dicts where dicts.name='mydict';"
-      # @query = "explain(analyze, format json) select count_on_topk_worlds(top_k_worlds(dict, 5), sentence) from cat_breeds, dicts where dicts.name='mydict';"
-    end
-  end
-
-  def run
-    if @algorithm.type_of_count == 'exact_count'
-      exact_count_experiment
-    elsif @algorithm.type_of_count == 'hist_count'
-      hist_count_experiment
-    elsif @algorithm.type_of_count == 'top_count'
-      top_count_experiment
-    end
+    "select count, STRING_AGG(sentence, '|') from dicts, comb_count('select sentence from cat_breeds', dict)
+      where dicts.name='mydict'
+      group by count;
+    "
   end
 
   def experiment_a
-    Dict.find_or_create_by(name: 'mydict')
-    Dict.my_dict.clear
-    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
+    rv = []
 
-    Rails.logger.info "Run Experiment A for #{algorithm.name}"
-
+   Rails.logger.info "Run Experiment A for #{algorithm.name}"
     begin
+      sql = explain_query
       CAT_BREEDS_A.each_with_index do |(name, breed, bdd), index|
 
         query_plan = nil
-        @bins = @bins && 4
+        r = bdd.split('=')[0]
 
-        cat = CatBreed.create(name: name, breed: breed, sentence: bdd)
-        sql = query
+        unless rv.include? r
+          Dict.my_dict.add_rva(DICTS[r]);
+        end
+
+        rv << r;
+
+        CatBreed.create(name: name, breed: breed, sentence: bdd)
 
         Timeout::timeout(30) {
           query_plan = ActiveRecord::Base.connection.execute(sql)
         }
 
-        time_ex = get_execution_time(query_plan)
+        time_ex =  get_execution_time(query_plan)
         Rails.logger.info "Count #{index + 1} tooks #{time_ex} ms"
         results[index+1] = time_ex
       end
-    rescue Timeout::Error => e
+    rescue Error => e
       puts e.message
     ensure
       index = results.size
@@ -80,9 +60,7 @@ class ExperimentsJobAgg
     @bins = @bins && 4
     max_nr = 15
     Rails.logger.info "Run Experiment B for #{algorithm.name}"
-    Dict.find_or_create_by(name: 'mydict')
-    Dict.my_dict.clear
-    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
+
     begin
       while nrv < max_nr do
         nrv += 1;
@@ -96,6 +74,7 @@ class ExperimentsJobAgg
         results[nrv] = time_ex
       end
     rescue Timeout::Error => e
+      puts e.message
     ensure
       index = results.size
       save_result(results, :experiment_b)
@@ -105,11 +84,8 @@ class ExperimentsJobAgg
   end
 
   def experiment_c
-    Dict.find_or_create_by(name: 'mydict')
-    Dict.my_dict.clear
-    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     i = 1
-    n = 15
+    n = 10
     results = {}
     @bins = @bins && 4
     begin
@@ -129,7 +105,7 @@ class ExperimentsJobAgg
         results[i] = time_ex
       end
     rescue Timeout::Error => e
-      puts e.message
+     puts e.message
     ensure
       puts results
       index = results.size
@@ -140,7 +116,7 @@ class ExperimentsJobAgg
   end
 
   def experiment_d
-    n = 15
+    n = 10
     cats = CatBreed.make(n);
     Dict.find_or_create_by(name: 'mydict')
     Dict.my_dict.clear
@@ -178,9 +154,6 @@ class ExperimentsJobAgg
   end
 
   def experiment_e
-    Dict.find_or_create_by(name: 'mydict')
-    Dict.my_dict.clear
-    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
 
@@ -215,9 +188,6 @@ class ExperimentsJobAgg
   end
 
   def experiment_f
-    Dict.find_or_create_by(name: 'mydict')
-    Dict.my_dict.clear
-    Dict.my_dict.add_rva(RVA_50_WITH_PROB.flatten.join(';'))
     results = {}
     clear_data
 
@@ -251,41 +221,4 @@ class ExperimentsJobAgg
       return results
     end
   end
-
-  def exact_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-  end
-
-  def hist_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-    experiment_e
-  end
-
-  def top_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-    experiment_f
-  end
-
-  private
-  def get_execution_time(query_plan)
-    JSON(query_plan[0]['QUERY PLAN'])[0]['Execution Time']
-  end
-
-  def save_result(results, experiment_name)
-    Experiment.create(result: results, name: experiment_name, algorithm_id: @algorithm.id)
-  end
-
-  def clear_data
-    CatBreed.in_batches.delete_all
-  end
-
 end

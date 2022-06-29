@@ -42,6 +42,23 @@ class Dict < ApplicationRecord
     rva.map{|rva| rva.split(';')}.flatten.map{|r| r.split(':')[0].strip}
   end
 
+  def rvs
+    rva.map{|rva| rva.split(';')}.flatten.map{|r| r.split('=')[0].strip}.uniq
+  end
+
+  def rvs
+    rva.map{|rva| rva.split(';')}.flatten.map{|r| r.split('=')[0].strip}.uniq
+  end
+
+  def rva_hash
+    rhash = Hash.new { |hash, key| hash[key] = [] }
+    rva.each do |irva|
+      r = irva.split(';').first.split('=')[0]
+      rhash[r]=irva
+    end
+    rhash
+  end
+
   def add_rva(rva_str)
     query = <<-SQL
       update Dicts

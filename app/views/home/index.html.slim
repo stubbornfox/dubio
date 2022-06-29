@@ -59,30 +59,31 @@ h1.my-3 DuBio database 🐈 🐈
     #myTabContent.tab-content.mt-5
       #exact.tab-pane.fade.show.active aria-labelledby="home-tab" role="tabpanel"
         .bd-example
-          = link_to 'Count on Combinations', home_exact_count_path, class: 'btn btn-dark remote-link', role: :button, remote: true
-          = link_to 'Count on Possible Worlds', home_possible_world_count_path, role: :button, class: 'btn btn-dark remote-link', remote: true
-          = link_to 'Aggregation Count on Possible Worlds', home_possible_world_count_agg_path, role: :button, class: 'btn btn-dark remote-link', remote: true
+          = link_to 'COMB COUNT', home_exact_count_path, class: 'btn btn-dark remote-link', role: :button, remote: true
+          = link_to 'PW COUNT', home_possible_world_count_agg_path, role: :button, class: 'btn btn-dark remote-link', remote: true
+          = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
+            = form.submit "Top 5 count", class: 'btn btn-dark remote-link'
         .count-result
-      #histogram.tab-pane.fade aria-labelledby="profile-tab" role="tabpanel"
-        = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
-          .row.g-3.align-items-center
-            .col-auto
-              = form.label :bin, 'Number of bins'
-            .col-auto
-              = form.number_field :bin, value: 2, class: 'form-control'
-            .col-auto
-              = form.submit "Count", class: 'btn btn-dark d-inline-block remote-link'
-        .count-result
-      #top.tab-pane.fade aria-labelledby="contact-tab" role="tabpanel"
-        = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
-          .row.g-3.align-items-center
-            .col-auto
-              = form.label :k, 'Top k'
-            .col-auto
-              = form.number_field :k, value: 1, class: 'form-control'
-            .col-auto
-              = form.submit "Top count", class: 'btn btn-dark remote-link'
-        .count-result
+      / #histogram.tab-pane.fade aria-labelledby="profile-tab" role="tabpanel"
+      /   = form_with url: home_hist_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
+      /     .row.g-3.align-items-center
+      /       .col-auto
+      /         = form.label :bin, 'Number of bins'
+      /       .col-auto
+      /         = form.number_field :bin, value: 2, class: 'form-control'
+      /       .col-auto
+      /         = form.submit "Count", class: 'btn btn-dark d-inline-block remote-link'
+      /   .count-result
+      / #top.tab-pane.fade aria-labelledby="contact-tab" role="tabpanel"
+      /   = form_with url: home_top_count_path, method: :get, remote: true, class: 'd-inline-block' do |form|
+      /     .row.g-3.align-items-center
+      /       .col-auto
+      /         = form.label :k, 'Top k'
+      /       .col-auto
+      /         = form.number_field :k, value: 1, class: 'form-control'
+      /       .col-auto
+      /         = form.submit "Top count", class: 'btn btn-dark remote-link'
+      /   .count-result
 
 
 javascript:

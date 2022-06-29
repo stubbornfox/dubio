@@ -10,7 +10,7 @@
         .col-6
           = f.submit 'Get Experiment Result', class: 'btn btn-dark'
     .row
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenA.accordion
           .accordion-item
             h2#panelsStayOpen-headingA.accordion-header
@@ -22,7 +22,7 @@
                   strong Varying number of tuples.
                   | This is to check the feasibility of the algorithm with respect to the size of the database, and also visualize the complexity of the algorithm.
                 .result
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenB.accordion
           .accordion-item
             h2#panelsStayOpen-headingB.accordion-header
@@ -34,7 +34,7 @@
                   strong Varying number of variables.
                   | This explores the effects of varying number of distinct variables while keeping the number of records constant and the number alternatives per variable at 1. This will produce an increasingly larger sentence and the depth of the BDD tree.
                 .result
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenC.accordion
           .accordion-item
             h2#panelsStayOpen-headingC.accordion-header
@@ -46,7 +46,7 @@
                   strong Varying Number of alternatives.
                   | This check the effects of varying number of alternatives, while keeping the number of variables constants.
                 .result.mt-5
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenD.accordion
           .accordion-item
             h2#panelsStayOpen-headingD.accordion-header
@@ -58,7 +58,7 @@
                   strong Varying sentence complexity.
                   | It studies the effects of varying complexity of the sentence while keeping the number of variable and alternative constant. This experiment mimics the answering of increasingly complex queries in a database
                 .result.mt-5
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenE.accordion
           .accordion-item
             h2#panelsStayOpen-headingE.accordion-header
@@ -70,7 +70,7 @@
                   strong Varying the number of bins.
                   | It discover the scale of running time on number of request bins.
                 .result.mt-5
-      .col-6.my-2
+      .col-12.my-2
         #accordionPanelsStayOpenF.accordion
           .accordion-item
             h2#panelsStayOpen-headingF.accordion-header

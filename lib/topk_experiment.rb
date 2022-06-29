@@ -1,37 +1,15 @@
 require 'timeout'
 
-class ExperimentsJob
-  attr_accessor :algorithm, :query, :n, :bins, :topk
+class TopkExperiment < ExperimentSetup
+  attr_accessor :k, :algorithm
 
-  def initialize(algorithm_id)
-    @algorithm = Algorithm.find(algorithm_id)
-    te = TestingEnvironment.new(@algorithm.name, @algorithm.code)
-    te.create_count_func
-    if @algorithm.type_of_count == 'hist_count'
-      @bins = 4
-    elsif @algorithm.type_of_count == 'top_count'
-      @k = 5
-    end
+  def initialize
+    @k = 5
+    @algorithm = Algorithm.find 26
   end
 
   def query
-    if @k
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@k}) order by prob desc limit #{@k}";
-    elsif @bins
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;', #{@bins});"
-    else
-      @query = "explain(analyze, format json) select * from #{@algorithm.name}('select * from cat_breeds;');"
-    end
-  end
-
-  def run
-    if @algorithm.type_of_count == 'exact_count'
-      exact_count_experiment
-    elsif @algorithm.type_of_count == 'hist_count'
-      hist_count_experiment
-    elsif @algorithm.type_of_count == 'top_count'
-      top_count_experiment
-    end
+    "select (q.c).count, STRING_AGG((q.c).sentence, '|') as bdd from (select unnest(count_on_topk_worlds(top_k_worlds(dict, #{@k}), sentence)) as c from cat_breeds, dicts where dicts.name='mydict') q group by count;"
   end
 
   def experiment_a
@@ -39,15 +17,21 @@ class ExperimentsJob
     clear_data
 
     Rails.logger.info "Run Experiment A for #{algorithm.name}"
+    rv = []
 
     begin
+      sql = explain_query
       CAT_BREEDS_A.each_with_index do |(name, breed, bdd), index|
-
         query_plan = nil
-        @bins = @bins && 4
+        r = bdd.split('=')[0]
+        unless rv.include? r
+          Dict.my_dict.add_rva(DICTS[r]);
+        end
+
+        rv << r;
 
         cat = CatBreed.create(name: name, breed: breed, sentence: bdd)
-        sql = query
+
         Timeout::timeout(30) {
           query_plan = ActiveRecord::Base.connection.execute(sql)
         }
@@ -56,8 +40,8 @@ class ExperimentsJob
         Rails.logger.info "Count #{index + 1} tooks #{time_ex} ms"
         results[index+1] = time_ex
       end
-    rescue Timeout::Error => e
-      puts e.message
+    rescue Error => e
+      puts e
     ensure
       index = results.size
       save_result(results, :experiment_a)
@@ -71,7 +55,7 @@ class ExperimentsJob
     n = 15
     results = {}
     @bins = @bins && 4
-    max_nr = 5
+    max_nr = 15
     Rails.logger.info "Run Experiment B for #{algorithm.name}"
 
     begin
@@ -216,7 +200,7 @@ class ExperimentsJob
         k += 1
         query_plan = nil
         @k = k
-        sql = query
+        sql = explain_query
         Timeout::timeout(30) {
           query_plan = ActiveRecord::Base.connection.execute(sql)
         }
@@ -234,41 +218,4 @@ class ExperimentsJob
       return results
     end
   end
-
-  def exact_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-  end
-
-  def hist_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-    experiment_e
-  end
-
-  def top_count_experiment
-    experiment_a
-    experiment_b
-    experiment_c
-    experiment_d
-    experiment_f
-  end
-
-  private
-  def get_execution_time(query_plan)
-    JSON(query_plan[0]['QUERY PLAN'])[0]['Execution Time']
-  end
-
-  def save_result(results, experiment_name)
-    Experiment.create(result: results, name: experiment_name, algorithm_id: @algorithm.id)
-  end
-
-  def clear_data
-    CatBreed.in_batches.delete_all
-  end
-
 end

@@ -40,7 +40,7 @@ begin
 end;
 $$;
 
-CREATE OR REPLACE FUNCTION count_on_worlds(list_of_worlds wholder[], sentence bdd, dict dictionary)
+CREATE OR REPLACE FUNCTION count_on_worlds(list_of_worlds count_prob[], sentence bdd, dict dictionary)
 RETURNS wholder[]
 LANGUAGE PLPGSQL
 AS
@@ -54,7 +54,7 @@ DECLARE
    result wholder[];
    temp text;
    changed boolean;
-   r wholder%rowtype;
+   r count_prob%rowtype;
 BEGIN
    result = ARRAY[]::wholder[];
    new_alternatives = ARRAY[]::text[];
@@ -86,7 +86,7 @@ BEGIN
       r.sentence = bdd('1');
       list_of_worlds = list_of_worlds || r;
    end IF;
-
+   -- result = list_of_worlds;
    -- raise notice 'list_of_worlds: %', list_of_worlds;
 
    IF not changed THEN -- IF THE WORLDS DO NOT CHANGE THEN JUST CALCULATE THE SENTENCE IN EACH WORLDS
@@ -127,9 +127,9 @@ $$;
 
 
 CREATE OR REPLACE AGGREGATE count_worlds(sentence bdd, dict dictionary)(
-   stype = wholder[],
+   stype = table,
    sfunc = count_on_worlds,
    initcond = '{}'
 );
 
---- select count_worlds(sentence,  dict) from cat_breeds, dicts where dicts.name='mydict';
+
